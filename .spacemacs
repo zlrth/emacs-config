@@ -274,12 +274,8 @@ layers configuration. You are free to put any user code."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ag-highlight-search t)
- '(ahs-case-fold-search nil)
- '(ahs-default-range (quote ahs-range-whole-buffer))
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
  '(ansi-color-names-vector
-   ["grey8" "#F92672" "#A6E22E" "#E6DB74" "#66D9EF" "#FD5FF0" "#A1EFE4" "#F8F8F2"])
+   ["#272822" "#F92672" "#A6E22E" "#E6DB74" "#66D9EF" "#FD5FF0" "#A1EFE4" "#F8F8F2"])
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(buffer-stack-filter (quote buffer-stack-filter-regexp))
  '(buffer-stack-ignore-pattern-exceptions (quote ("*ielm*" "*shell*")))
@@ -292,18 +288,16 @@ layers configuration. You are free to put any user code."
  '(completion-ignored-extensions
    (quote
     (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
- '(custom-enabled-themes (quote (monokai)))
+ '(custom-enabled-themes (quote (noctilux)))
  '(custom-safe-themes
    (quote
-    ("4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "0fb6369323495c40b31820ec59167ac4c40773c3b952c264dd8651a3b704f6b5" "203da418e89792a1d5daef1af4058461a4432e9aa5e211c1a28e1f727162efd8" default)))
+    ("4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" default)))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(diary-entry-marker (quote font-lock-variable-name-face))
  '(dired-listing-switches
    "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
  '(dired-use-ls-dired (quote unspecified))
- '(eclim-eclipse-dirs (quote ("~/bin/eclipse")))
- '(eclim-executable "~/bin/eclipse/eclim")
  '(ediff-split-window-function (quote split-window-horizontally) t)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain) t)
  '(electric-indent-mode t)
@@ -311,12 +305,10 @@ layers configuration. You are free to put any user code."
  '(evil-want-Y-yank-to-eol t)
  '(fci-rule-color "#49483E" t)
  '(fringe-mode 0 nil (fringe))
- '(global-anzu-mode t)
  '(global-auto-highlight-symbol-mode t)
  '(global-evil-search-highlight-persist nil)
  '(global-undo-tree-mode t)
  '(global-vi-tilde-fringe-mode t)
- '(golden-ratio-mode nil)
  '(grep-command "grep -n -e ")
  '(grep-find-command (quote ("find . -type f -exec grep -nHir -e  {} +" . 34)))
  '(grep-find-ignored-files
@@ -331,18 +323,16 @@ layers configuration. You are free to put any user code."
  '(highlight-tail-colors
    (quote
     (("#49483E" . 0)
-     ("#67930F" . 20)
-     ("#349B8D" . 30)
-     ("#21889B" . 50)
-     ("#968B26" . 60)
-     ("#A45E0A" . 70)
-     ("#A41F99" . 85)
+     ("#679A01" . 20)
+     ("#4BBEAE" . 30)
+     ("#1DB4D0" . 50)
+     ("#9A8F21" . 60)
+     ("#A75B00" . 70)
+     ("#F309DF" . 85)
      ("#49483E" . 100))))
  '(hl-paren-delay 0.2)
  '(ispell-highlight-face (quote flyspell-incorrect))
  '(magit-diff-use-overlays nil)
- '(magit-use-overlays nil)
- '(main-line-separator-style (quote chamfer))
  '(open-resource-ignore-patterns (quote ("/target/" "~$" ".old$" ".svn" "/bin/" ".class$")) t)
  '(org-agenda-custom-commands
    (quote
@@ -352,7 +342,9 @@ layers configuration. You are free to put any user code."
       nil)
      ("x" agenda "doesn't have data like :food:interruptions:reading:"
       ((org-agenda-ndays 7)
-       (org-agenda-filter-preset '("-reading" "-food" "-interrupt")))))))
+       (org-agenda-filter-preset
+        (quote
+         ("-reading" "-food" "-interrupt"))))))))
  '(org-agenda-files
    (quote
     ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
@@ -410,9 +402,8 @@ layers configuration. You are free to put any user code."
     ("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil "")))
- '(paradox-github-token t)
  '(pos-tip-background-color "#A6E22E")
- '(pos-tip-foreground-color "grey8")
+ '(pos-tip-foreground-color "#272822")
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
@@ -455,20 +446,9 @@ layers configuration. You are free to put any user code."
      (360 . "#66D9EF"))))
  '(vc-annotate-very-old-color nil)
  '(weechat-color-list
-   (unspecified "grey8" "#49483E" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
+   (unspecified "#272822" "#49483E" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
  '(which-key-idle-delay 0.0))
 
-;;  '(anzu-mode-line ((t (:background "black" :foreground "white" :weight bold))))
-;;  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0 :color "#49483E" :foreground "#49483E" :background "firebrick1"))))
-;;  '(background-color my-background-color)
-;;  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
-;;  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
-;;  '(evil-search-highlight-persist-highlight-face ((t (:background "yellow" :foreground "black"))))
-;;  '(highlight ((t (:background "lawn green" :foreground "black"))))
-;;  '(highlight-indentation-current-column-face ((t (:background "gray13"))))
-;;  '(highlight-indentation-face ((t (:background "gray14"))))
-;;  '(show-paren-match ((t (:background "#272822" :inverse-video t :underline "cyan" :weight extra-bold))))
-;;  '(sp-show-pair-match-face ((t (:background "green" :foreground "gray17" :underline "green" :weight extra-bold)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
