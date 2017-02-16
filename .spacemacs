@@ -39,9 +39,7 @@ values."
      javascript
      gnus
      haskell
-     common-lisp
      scheme
-     mu4e
      org
      )
    ;; List of additional packages that will be installed without being
@@ -49,6 +47,8 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
+                                      pdf-tools
+                                      git-gutter-fringe+
                                       gnu-apl-mode
                                       ;; stylish-haskell
                                        noctilux-theme
@@ -69,7 +69,6 @@ values."
                                        eval-in-repl
                                        buffer-stack
 
-                                       ;;
                                        magit
                                        key-chord
                                        gitconfig-mode
@@ -125,7 +124,7 @@ values."
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner 'nil
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects'.
    ;; (default '(recents projects))
@@ -134,10 +133,6 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(monokai
-                         ;; jason
-                         dakrone ; like a lot
-                         lush ; like a lot
-                         molokai ; like a lot . prob fave
                          noctilux
                          )
 
@@ -190,7 +185,7 @@ values."
    dotspacemacs-enable-paste-micro-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 0.0
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -241,7 +236,9 @@ values."
    ;; The default package repository used if no explicit repository has been
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
-   dotspacemacs-default-package-repository nil))
+   dotspacemacs-default-package-repository nil
+   global-visual-line-mode t
+   ))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
@@ -261,7 +258,11 @@ layers configuration. You are free to put any user code."
   (setq system-uses-terminfo nil)
   (setq persp-kill-foreign-buffer-action nil)
   (spacemacs/toggle-mode-line-org-clock-on)
-  
+
+  ;; this might work
+  (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
+
+  (pdf-tools-install)
   )
 
 
@@ -282,6 +283,7 @@ layers configuration. You are free to put any user code."
  '(buffer-stack-untracked
    (quote
     ("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*")))
+ '(cider-repl-history-file "~/emacs-files/cider-history")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
  '(compilation-message-face (quote default))
@@ -298,6 +300,7 @@ layers configuration. You are free to put any user code."
  '(dired-listing-switches
    "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
  '(dired-use-ls-dired (quote unspecified))
+ '(doc-view-resolution 200)
  '(ediff-split-window-function (quote split-window-horizontally) t)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain) t)
  '(electric-indent-mode t)
@@ -333,6 +336,7 @@ layers configuration. You are free to put any user code."
  '(hl-paren-delay 0.2)
  '(ispell-highlight-face (quote flyspell-incorrect))
  '(magit-diff-use-overlays nil)
+ '(nrepl-log-messages t)
  '(open-resource-ignore-patterns (quote ("/target/" "~$" ".old$" ".svn" "/bin/" ".class$")) t)
  '(org-agenda-custom-commands
    (quote
@@ -350,27 +354,36 @@ layers configuration. You are free to put any user code."
     ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
  '(org-capture-templates
    (quote
-    (("e" "emacs annoyances" entry
+    (("b" "copy of interruption" entry
+      (file+headline "~/org/schedule.org" "* interruptions")
+      "** %?
+%a
+%T
+%i" :clock-in t :clock-resume t)
+     ("k" "outlaw" entry
+      (file "~/org/notes.org")
+      "* fuck %?")
+     ("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "** %?
 %T
-%x")
+")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
       "** %?
 %T
-%x")
+")
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
       "** %?
 %T
-%x
+
 %a")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
       "** %?
 %T
-%x
+
 %a
 %i
 
@@ -384,16 +397,15 @@ layers configuration. You are free to put any user code."
       (file+headline "notes.org" "diary")
       "** 
 %T
-%x
+
 %a
 %i
 %?" :clock-in t :clock-resume t)
      ("i" "interruption" entry
       (file+headline "schedule.org" "interruptions")
       "** %?
-%T
-%x
 %a
+%T
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
  '(org-startup-truncated nil)
@@ -446,8 +458,7 @@ layers configuration. You are free to put any user code."
      (360 . "#66D9EF"))))
  '(vc-annotate-very-old-color nil)
  '(weechat-color-list
-   (unspecified "#272822" "#49483E" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
- '(which-key-idle-delay 0.0))
+   (unspecified "#272822" "#49483E" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

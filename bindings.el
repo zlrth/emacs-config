@@ -50,7 +50,6 @@
 (global-set-key (kbd "M-G r")   'open-resource)
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
 
-;; (global-set-key (kbd "M-k")     'keyboard-quit)
 (global-set-key (kbd "M-x")     'helm-M-x)
 (global-set-key [C-tab]         'dabbrev-expand)
 
@@ -62,7 +61,6 @@
 (global-set-key (kbd "C-r")     'isearch-backward)
 ;; (global-set-key (kbd "M-5")     'query-replace)
 ;; (global-set-key (kbd "M-%")     'digit-argument)
-(global-set-key (kbd "<f8>") 'xah-open-file-fast)
 
 (global-set-key (kbd "<H-f7>") 'desktop-change-dir)
 
@@ -83,33 +81,15 @@
      (define-key paredit-mode-map (kbd "H-M-s") 'paredit-split-sexp)
      (define-key paredit-mode-map (kbd "M-S") nil)))
 
-(defun zencoding-hooks ()
-  (define-key zencoding-mode-map (kdb "C-j" nil))
-  (define-key zencoding-mode-map (kdb "M-C k" 'zencoding-expand-line)))
-
-;; Override these cuz really all I want is the symbols to be highlighted
-(eval-after-load 'auto-highlight-symbol
-  '(progn
-     (define-key auto-highlight-symbol-mode-map (kbd "M--") nil)))
 
 (eval-after-load 'undo-tree
   '(progn
      (define-key undo-tree-map (kbd "C-r") nil)))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (interactive)
-            ;; (setq flyspell-mode t)
-            (setq auto-highlight-symbol-mode nil)
-            (define-key org-mode-map (kbd "M-S-<return>") 'org-insert-subheading)
-            (define-key org-mode-map (kbd "C-<return>")   'org-insert-heading-after-current)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; evil stuff
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
-(define-key evil-normal-state-map (kbd "C-u") nil)
 (define-key evil-normal-state-map (kbd "C-u") nil)
 
 
@@ -225,13 +205,6 @@
   (key-chord-define term-raw-map "kj" 'evil-normal-state-and-term-line-mode)
   (evil-define-key 'normal term-raw-map "i" 'evil-insert-state-and-term-char-mode))
 ;; (evil-define-key 'normal "i" 'evil-insert-state-and-term-char-mode)
-
-
-
-(defun my-poop-keys ()
-  (interactive)
-  (local-set-key "C-c C-c" nil))
-
 
 ;; (define-key term-mode-map (kbd "C-c C-]") 'evil-normal-state-and-term-line-mode)
 
