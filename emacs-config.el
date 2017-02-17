@@ -34,9 +34,6 @@
 (evil-define-key 'normal term-raw-map
   "p" 'term-paste)
 
-(defun m/open-terminal ()
-  (interactive)
-  (shell (generate-new-buffer-name "shell")))
 
 
 (load-file "/Users/matt/emacs-files/bindings.el")

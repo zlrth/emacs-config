@@ -238,6 +238,7 @@ values."
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
    global-visual-line-mode t
+   evil-escape-key-sequence "kj"
    ))
 
 (defun dotspacemacs/user-init ()
@@ -263,6 +264,9 @@ layers configuration. You are free to put any user code."
   (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
 
   (pdf-tools-install)
+
+  (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
+
   )
 
 
