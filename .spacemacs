@@ -18,7 +18,6 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     python
      markdown
      csv
      html
@@ -37,10 +36,9 @@ values."
      emacs-lisp
      elfeed
      javascript
-     gnus
-     haskell
      scheme
      org
+     git
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -50,46 +48,20 @@ values."
                                       pdf-tools
                                       git-gutter-fringe+
                                       gnu-apl-mode
-                                      ;; stylish-haskell
-                                       noctilux-theme
-                                       workgroups2
-                                       elisp-slime-nav
-                                       shen-mode
-                                       workgroups2
-                                       projectile
-                                       sicp
-                                       zencoding-mode yasnippet
-                                       vimish-fold
+                                      shen-mode
                                        ;; clojure/lisps
-                                       clj-refactor clojure-mode rainbow-delimiters
-                                       clojure-mode-extra-font-locking clojure-quick-repls ;clojure-snippets
-                                       nrepl-eval-sexp-fu
-                                       ac-cider
-                                       cider cider-decompile cider-eval-sexp-fu cider-profile cider-spy
-                                       eval-in-repl
-                                       buffer-stack
-
-                                       magit
-                                       key-chord
-                                       gitconfig-mode
-                                       docker dockerfile-mode
-                                       sr-speedbar
+                                       ;; clj-refactor clojure-mode rainbow-delimiters
+                                       ;; cider cider-decompile cider-eval-sexp-fu cider-profile cider-spy
+                                       ;; eval-in-repl
+                                       ;; key-chord
+                                       ;; gitconfig-mode
+                                       ;; docker dockerfile-mode
 
                                        ;; misc modes
-                                       yaml-mode
-                                       markdown-mode
-                                       groovy-mode
 
                                        ;; display stuff
-                                       volatile-highlights
-                                       rainbow-blocks  rainbow-identifiers rainbow-mode
                                        org-bullets org-beautify-theme
-                                       highlight-parentheses hl-anything
-                                       highlight-numbers
-                                       f
-                                       emacs-eclim
-                                       ;; company
-                                       ag)
+                                       )
 
     ;; A list of packages and/or extensions that will not be install and loaded.
     ;; dotspacemacs-excluded-packages '(persp-mode
@@ -132,7 +104,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(monokai
+   dotspacemacs-themes '(;; monokai
                          noctilux
                          )
 
@@ -140,7 +112,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Operator Mono"
+   dotspacemacs-default-font '("Verdana"
                                :size 12
                                :weight thin
                                :width normal
@@ -251,7 +223,6 @@ user code."
   "Configuration function for user code.
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-  (load-file "~/emacs-files/emacs-config.el")
   (load-file "~/.private/emacs-feeds-and-private.el")
 
   (add-to-list 'exec-path "~/.cabal/bin")
@@ -265,7 +236,59 @@ layers configuration. You are free to put any user code."
 
   (pdf-tools-install)
 
+  (defun really-kill-emacs ()
+    (interactive)
+    (let (kill-emacs-hook) (kill-emacs)))
+  (define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
+  (defun m/open-terminal ()
+    (interactive)
+    (shell (generate-new-buffer-name "shell")))
+
+  (define-key evil-normal-state-map (kbd "q") nil) ;; this is a way to make 'q' a prefix key
+  (define-key evil-normal-state-map (kbd "qq") 'quit-window)
+  (define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
+
+  (global-set-key (kbd "M-x")     'helm-M-x)
+  (define-key evil-normal-state-map (kbd "SPC :")  'helm-M-x)
+  (define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
+  (define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
+
+  (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
+  (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
+
+  (define-key evil-normal-state-map (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test)
+  (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
+  (define-key evil-normal-state-map (kbd "SPC SPC") nil)
+  (global-set-key [C-tab]         'dabbrev-expand)
+  (global-set-key (kbd "C-x C-c") 'nil) ;; default \C-x\C-c is too easy to hit accidentally
+  ;; OSX annoyances
+  (global-unset-key (kbd "s-t"))
+  (setq projectile-enable-caching t)
+  (global-evil-search-highlight-persist nil)
+  (evil-set-initial-state 'elfeed-show-mode 'insert)
+  (evil-set-initial-state 'elfeed-search-mode 'insert)
+  (setq helm-M-x-fuzzy-match t)
+  (helm-autoresize-mode t)
+  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-recentf-fuzzy-match t)
+  (setq helm-semantic-fuzzy-match t)
+  (setq helm-imenu-fuzzy-match t)
+  (helm-autoresize-mode t)
+
+  (setq debug-on-error t)
+  ;; (menu-bar-mode -1)
+
+  ;; (projectile-global-mode)
+
+  (defun m/split-window-and-ask-for-buffer ()
+    (interactive)
+    (split-window-right-and-focus)
+    (helm-buffers-list))
+
+  (setq inferior-shen-program "java -jar /Users/matt/hacking/shen/shen.clj/shen.clj-0.1.8-SNAPSHOT/shen.clj-0.1.8-SNAPSHOT-standalone.jar")
+
+  (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)
 
   )
 
@@ -278,12 +301,6 @@ layers configuration. You are free to put any user code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ag-highlight-search t)
- '(ansi-color-names-vector
-   ["#272822" "#F92672" "#A6E22E" "#E6DB74" "#66D9EF" "#FD5FF0" "#A1EFE4" "#F8F8F2"])
- '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
- '(buffer-stack-filter (quote buffer-stack-filter-regexp))
- '(buffer-stack-ignore-pattern-exceptions (quote ("*ielm*" "*shell*")))
  '(buffer-stack-untracked
    (quote
     ("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*")))
@@ -295,53 +312,18 @@ layers configuration. You are free to put any user code."
    (quote
     (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
  '(custom-enabled-themes (quote (noctilux)))
- '(custom-safe-themes
-   (quote
-    ("4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" default)))
  '(desktop-save t)
  '(desktop-save-mode t)
- '(diary-entry-marker (quote font-lock-variable-name-face))
  '(dired-listing-switches
    "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
  '(dired-use-ls-dired (quote unspecified))
- '(doc-view-resolution 200)
- '(ediff-split-window-function (quote split-window-horizontally) t)
- '(ediff-window-setup-function (quote ediff-setup-windows-plain) t)
- '(electric-indent-mode t)
  '(evil-default-cursor (quote (hbar)))
  '(evil-want-Y-yank-to-eol t)
- '(fci-rule-color "#49483E" t)
  '(fringe-mode 0 nil (fringe))
- '(global-auto-highlight-symbol-mode t)
  '(global-evil-search-highlight-persist nil)
  '(global-undo-tree-mode t)
- '(global-vi-tilde-fringe-mode t)
- '(grep-command "grep -n -e ")
- '(grep-find-command (quote ("find . -type f -exec grep -nHir -e  {} +" . 34)))
- '(grep-find-ignored-files
-   (quote
-    (".#*" "*.o" "*~" "*.bin" "*.lbin" "*.so" "*.a" "*.ln" "*.blg" "*.bbl" "*.elc" "*.lof" "*.glo" "*.idx" "*.lot" "*.fmt" "*.tfm" "*.class" "*.fas" "*.lib" "*.mem" "*.x86f" "*.sparcf" "*.dfsl" "*.pfsl" "*.d64fsl" "*.p64fsl" "*.lx64fsl" "*.lx32fsl" "*.dx64fsl" "*.dx32fsl" "*.fx64fsl" "*.fx32fsl" "*.sx64fsl" "*.sx32fsl" "*.wx64fsl" "*.wx32fsl" "*.fasl" "*.ufsl" "*.fsl" "*.dxl" "*.lo" "*.la" "*.gmo" "*.mo" "*.toc" "*.aux" "*.fn" "*.ky" "*.pg" "*.tp" "*.vr" "*.cps" "*.fns" "*.kys" "*.pgs" "*.tps" "*.vrs" "*.pyc" "*.pyo")))
- '(grep-find-template "find . <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
- '(grep-highlight-matches (quote auto))
- '(grep-template "grep <X> <C> -n -e <R> <F>")
- '(grep-use-null-device t)
  '(helm-ag-use-agignore t)
- '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
- '(highlight-tail-colors
-   (quote
-    (("#49483E" . 0)
-     ("#679A01" . 20)
-     ("#4BBEAE" . 30)
-     ("#1DB4D0" . 50)
-     ("#9A8F21" . 60)
-     ("#A75B00" . 70)
-     ("#F309DF" . 85)
-     ("#49483E" . 100))))
- '(hl-paren-delay 0.2)
- '(ispell-highlight-face (quote flyspell-incorrect))
- '(magit-diff-use-overlays nil)
  '(nrepl-log-messages t)
- '(open-resource-ignore-patterns (quote ("/target/" "~$" ".old$" ".svn" "/bin/" ".class$")) t)
  '(org-agenda-custom-commands
    (quote
     (("n" "Agenda and all TODOs"
@@ -418,8 +400,6 @@ layers configuration. You are free to put any user code."
     ("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil "")))
- '(pos-tip-background-color "#A6E22E")
- '(pos-tip-foreground-color "#272822")
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
@@ -431,46 +411,14 @@ layers configuration. You are free to put any user code."
     ("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#")))
  '(projectile-indexing-method (quote native))
  '(read-buffer-completion-ignore-case t)
- '(recentf-exclude (quote (".*ido\\.last" "/elpa/" ".*~$" ".*gz$")))
- '(recentf-keep (quote (recentf-keep-default-predicate)))
- '(recentf-max-saved-items 50)
- '(recentf-mode t)
- '(safe-local-variable-values (quote ((require-final-newline))))
  '(shr-external-browser (quote eww-browse-url))
  '(tool-bar-mode nil)
- '(trash-directory "~/.Trash")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#F92672")
-     (40 . "#CF4F1F")
-     (60 . "#C26C0F")
-     (80 . "#E6DB74")
-     (100 . "#AB8C00")
-     (120 . "#A18F00")
-     (140 . "#989200")
-     (160 . "#8E9500")
-     (180 . "#A6E22E")
-     (200 . "#729A1E")
-     (220 . "#609C3C")
-     (240 . "#4E9D5B")
-     (260 . "#3C9F79")
-     (280 . "#A1EFE4")
-     (300 . "#299BA6")
-     (320 . "#2896B5")
-     (340 . "#2790C3")
-     (360 . "#66D9EF"))))
- '(vc-annotate-very-old-color nil)
- '(weechat-color-list
-   (unspecified "#272822" "#49483E" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
+ '(trash-directory "~/.Trash"))
 
+;; .spacemacs is 479 lines long
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))))
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-
-;; .spacemacs is 479 lines long
+ '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "nil" :family "Verdana")))))
