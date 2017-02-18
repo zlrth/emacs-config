@@ -30,7 +30,6 @@ values."
      (auto-completion :disabled-for org)
      erc
      elm
-     intero
      spacemacs-layouts
      chrome
      emacs-lisp
@@ -38,6 +37,7 @@ values."
      javascript
      scheme
      org
+     version-control
      git
      )
    ;; List of additional packages that will be installed without being
@@ -46,7 +46,7 @@ values."
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
                                       pdf-tools
-                                      git-gutter-fringe+
+                                      fringe-helper
                                       gnu-apl-mode
                                       shen-mode
                                        ;; clojure/lisps
@@ -71,7 +71,7 @@ values."
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
-   dotspacemacs-delete-orphan-packages nil))
+   dotspacemacs-delete-orphan-packages t))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -225,16 +225,11 @@ user code."
 layers configuration. You are free to put any user code."
   (load-file "~/.private/emacs-feeds-and-private.el")
 
-  (add-to-list 'exec-path "~/.cabal/bin")
-
   (setq system-uses-terminfo nil)
-  (setq persp-kill-foreign-buffer-action nil)
   (spacemacs/toggle-mode-line-org-clock-on)
 
   ;; this might work
-  (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
-
-  (pdf-tools-install)
+  ;; (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
 
   (defun really-kill-emacs ()
     (interactive)
@@ -269,17 +264,12 @@ layers configuration. You are free to put any user code."
   (evil-set-initial-state 'elfeed-show-mode 'insert)
   (evil-set-initial-state 'elfeed-search-mode 'insert)
   (setq helm-M-x-fuzzy-match t)
-  (helm-autoresize-mode t)
   (setq helm-buffers-fuzzy-matching t)
   (setq helm-recentf-fuzzy-match t)
   (setq helm-semantic-fuzzy-match t)
   (setq helm-imenu-fuzzy-match t)
-  (helm-autoresize-mode t)
 
   (setq debug-on-error t)
-  ;; (menu-bar-mode -1)
-
-  ;; (projectile-global-mode)
 
   (defun m/split-window-and-ask-for-buffer ()
     (interactive)
@@ -312,6 +302,9 @@ layers configuration. You are free to put any user code."
    (quote
     (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
  '(custom-enabled-themes (quote (noctilux)))
+ '(custom-safe-themes
+   (quote
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(dired-listing-switches
@@ -400,6 +393,9 @@ layers configuration. You are free to put any user code."
     ("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil "")))
+ '(package-selected-packages
+   (quote
+    (fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
@@ -412,7 +408,6 @@ layers configuration. You are free to put any user code."
  '(projectile-indexing-method (quote native))
  '(read-buffer-completion-ignore-case t)
  '(shr-external-browser (quote eww-browse-url))
- '(tool-bar-mode nil)
  '(trash-directory "~/.Trash"))
 
 ;; .spacemacs is 479 lines long
@@ -421,4 +416,4 @@ layers configuration. You are free to put any user code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "nil" :family "Verdana")))))
+ '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 120 :width normal :foundry "nil" :family "Verdana")))))
