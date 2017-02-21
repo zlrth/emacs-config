@@ -46,20 +46,9 @@ values."
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
                                       pdf-tools
-                                      fringe-helper
                                       gnu-apl-mode
                                       shen-mode
-                                       ;; clojure/lisps
-                                       ;; clj-refactor clojure-mode rainbow-delimiters
-                                       ;; cider cider-decompile cider-eval-sexp-fu cider-profile cider-spy
-                                       ;; eval-in-repl
-                                       ;; key-chord
-                                       ;; gitconfig-mode
-                                       ;; docker dockerfile-mode
 
-                                       ;; misc modes
-
-                                       ;; display stuff
                                        org-bullets org-beautify-theme
                                        )
 
@@ -231,6 +220,8 @@ layers configuration. You are free to put any user code."
   ;; this might work
   ;; (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
 
+  (add-hook 'org-mode-hook 'toggle-word-wrap)
+
   (defun really-kill-emacs ()
     (interactive)
     (let (kill-emacs-hook) (kill-emacs)))
@@ -248,6 +239,8 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
   (define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
+  (define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
+  (define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
 
   (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
   (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
@@ -257,6 +250,7 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "SPC SPC") nil)
   (global-set-key [C-tab]         'dabbrev-expand)
   (global-set-key (kbd "C-x C-c") 'nil) ;; default \C-x\C-c is too easy to hit accidentally
+
   ;; OSX annoyances
   (global-unset-key (kbd "s-t"))
   (setq projectile-enable-caching t)
@@ -269,7 +263,20 @@ layers configuration. You are free to put any user code."
   (setq helm-semantic-fuzzy-match t)
   (setq helm-imenu-fuzzy-match t)
 
+  ;; (setenv "SHELL" "/bin/bash")
+
   (setq debug-on-error t)
+  (setq org-hide-emphasis-markers t) ;; i think this is buffer-local. TODO fix
+
+  (toggle-word-wrap) ;; i think this is buffer-local. TODO fix
+  
+  (define-key evil-normal-state-map (kbd "SPC SPC") nil)
+
+  (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
+  (defun m/edit-dot-spacemacs ()
+    (interactive)
+    (find-file "~/.spacemacs"))
+
 
   (defun m/split-window-and-ask-for-buffer ()
     (interactive)
@@ -344,23 +351,23 @@ layers configuration. You are free to put any user code."
       "* fuck %?")
      ("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
-      "** %?
+      "**  %?
 %T
 ")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
-      "** %?
+      "**  %?
 %T
 ")
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
-      "** %?
+      "**  %?
 %T
 
 %a")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
-      "** %?
+      "**  %?
 %T
 
 %a
@@ -369,7 +376,7 @@ layers configuration. You are free to put any user code."
 ")
      ("f" "food" entry
       (file+headline "~/org/schedule.org" "food")
-      "** %?
+      "**  %?
 %T
 ")
      ("d" "diary entry" entry
@@ -382,7 +389,7 @@ layers configuration. You are free to put any user code."
 %?" :clock-in t :clock-resume t)
      ("i" "interruption" entry
       (file+headline "schedule.org" "interruptions")
-      "** %?
+      "**  %?
 %a
 %T
 %i" :clock-in t :clock-resume t))))
@@ -417,3 +424,4 @@ layers configuration. You are free to put any user code."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 120 :width normal :foundry "nil" :family "Verdana")))))
+
