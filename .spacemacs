@@ -198,7 +198,8 @@ values."
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
-   global-visual-line-mode t
+   ;; global-visual-line-mode t ;; disabling? not sure if i want this. i get line-escapes at the edge of a window.
+   word-wrap t ;; TODO does this work?
    evil-escape-key-sequence "kj"
    ))
 
@@ -242,6 +243,7 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
   (define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
 
+
   (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
   (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
 
@@ -263,31 +265,33 @@ layers configuration. You are free to put any user code."
   (setq helm-semantic-fuzzy-match t)
   (setq helm-imenu-fuzzy-match t)
 
-  ;; (setenv "SHELL" "/bin/bash")
-
   (setq debug-on-error t)
-  (setq org-hide-emphasis-markers t) ;; i think this is buffer-local. TODO fix
+  (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
 
-  (toggle-word-wrap) ;; i think this is buffer-local. TODO fix
-  
   (define-key evil-normal-state-map (kbd "SPC SPC") nil)
 
   (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
+
   (defun m/edit-dot-spacemacs ()
     (interactive)
     (find-file "~/.spacemacs"))
 
+  (define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
+
+  (defun m/insert-interruption ()
+    (interactive)
+    (org-capture nil "i"))
 
   (defun m/split-window-and-ask-for-buffer ()
     (interactive)
     (split-window-right-and-focus)
     (helm-buffers-list))
 
-  (setq inferior-shen-program "java -jar /Users/matt/hacking/shen/shen.clj/shen.clj-0.1.8-SNAPSHOT/shen.clj-0.1.8-SNAPSHOT-standalone.jar")
 
-  (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)
 
-  )
+  (setq inferior-shen-program "java -jar /Users/matt/hacking/shen/shen.clj/shen.clj-0.1.8-SNAPSHOT/shen.clj-0.1.8-SNAPSHOT-standalone.jar") ;; TODO could i put all of these setq's up in setq-default?
+
+  (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)) ;; TODO do i need this?
 
 
 
@@ -338,18 +342,9 @@ layers configuration. You are free to put any user code."
  '(org-agenda-files
    (quote
     ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
- '(org-capture-templates
+ '(org-capture-templates ;; TODO "l" for org-inser-link
    (quote
-    (("b" "copy of interruption" entry
-      (file+headline "~/org/schedule.org" "* interruptions")
-      "** %?
-%a
-%T
-%i" :clock-in t :clock-resume t)
-     ("k" "outlaw" entry
-      (file "~/org/notes.org")
-      "* fuck %?")
-     ("e" "emacs annoyances" entry
+    (("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "**  %?
 %T
