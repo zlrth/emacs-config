@@ -27,7 +27,7 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     (auto-completion :disabled-for org)
+     (auto-completion :disabled-for spacemacs-org org)
      erc
      elm
      spacemacs-layouts
@@ -36,6 +36,7 @@ values."
      elfeed
      javascript
      scheme
+     spacemacs-org
      org
      version-control
      git
@@ -49,7 +50,8 @@ values."
                                       gnu-apl-mode
                                       shen-mode
 
-                                       org-bullets org-beautify-theme
+                                      ;;org-bullets ;; i think i don't need this
+                                      org-beautify-theme
                                        )
 
     ;; A list of packages and/or extensions that will not be install and loaded.
@@ -218,6 +220,8 @@ layers configuration. You are free to put any user code."
   (setq system-uses-terminfo nil)
   (spacemacs/toggle-mode-line-org-clock-on)
 
+  ;; (add-to-list 'org-modules 'org-habit)
+
   ;; this might work
   ;; (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
 
@@ -227,6 +231,7 @@ layers configuration. You are free to put any user code."
     (interactive)
     (let (kill-emacs-hook) (kill-emacs)))
   (define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
+
   (defun m/open-terminal ()
     (interactive)
     (shell (generate-new-buffer-name "shell")))
@@ -235,15 +240,17 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "qq") 'quit-window)
   (define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
 
-  (global-set-key (kbd "M-x")     'helm-M-x)
-  (define-key evil-normal-state-map (kbd "SPC :")  'helm-M-x)
+  ;; (global-set-key (kbd "M-x")     'helm-M-x) ;; i think this is the default
+  ;; (define-key evil-normal-state-map (kbd "SPC :")  'helm-M-x)
   (define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
   (define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
   (define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
   (define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
-
-
+  (define-key evil-normal-state-map (kbd "SPC d c")  'm/org-goto-selection)
+  (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
+  (define-key evil-normal-state-map (kbd "SPC d f") 'm/edit-schedule)
+  (define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
   (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
   (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
 
@@ -253,8 +260,33 @@ layers configuration. You are free to put any user code."
   (global-set-key [C-tab]         'dabbrev-expand)
   (global-set-key (kbd "C-x C-c") 'nil) ;; default \C-x\C-c is too easy to hit accidentally
 
+  (define-key evil-normal-state-map (kbd "SPC SPC") 'kmacro-end-and-call-macro)
+
+  (defun m/org-goto-selection ()
+    (interactive)
+    (org-clock-goto 'SELECT)
+    (org-clock-in))
+
+  (defun m/edit-dot-spacemacs ()
+    (interactive)
+    (find-file "~/.spacemacs"))
+
+  (defun m/edit-schedule ()
+    (interactive)
+    (find-file "~/org/schedule.org"))
+
+  (defun m/insert-interruption ()
+    (interactive)
+    (org-capture nil "i"))
+
+  (defun m/split-window-and-ask-for-buffer ()
+    (interactive)
+    (split-window-right-and-focus)
+    (helm-buffers-list))
+
   ;; OSX annoyances
   (global-unset-key (kbd "s-t"))
+
   (setq projectile-enable-caching t)
   (global-evil-search-highlight-persist nil)
   (evil-set-initial-state 'elfeed-show-mode 'insert)
@@ -268,24 +300,6 @@ layers configuration. You are free to put any user code."
   (setq debug-on-error t)
   (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
 
-  (define-key evil-normal-state-map (kbd "SPC SPC") nil)
-
-  (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
-
-  (defun m/edit-dot-spacemacs ()
-    (interactive)
-    (find-file "~/.spacemacs"))
-
-  (define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
-
-  (defun m/insert-interruption ()
-    (interactive)
-    (org-capture nil "i"))
-
-  (defun m/split-window-and-ask-for-buffer ()
-    (interactive)
-    (split-window-right-and-focus)
-    (helm-buffers-list))
 
 
 
@@ -342,9 +356,16 @@ layers configuration. You are free to put any user code."
  '(org-agenda-files
    (quote
     ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
- '(org-capture-templates ;; TODO "l" for org-inser-link
+ '(org-capture-templates
    (quote
-    (("e" "emacs annoyances" entry
+    (("t" "wordpress freelancing" entry
+      (file+olp "~/org/home.org" "freelancing" "wordpress")
+      "**  %?
+%a
+%T
+%i
+")
+     ("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "**  %?
 %T
@@ -389,6 +410,14 @@ layers configuration. You are free to put any user code."
 %T
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
+ '(org-modules
+   (quote
+    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
+ '(org-refile-targets
+   (quote
+    ((org-agenda-files :regexp . "paypal")
+     (org-agenda-files :regexp . "jokes")
+     (org-agenda-files :regexp . "time spent"))))
  '(org-startup-truncated nil)
  '(org-stuck-projects
    (quote
@@ -397,7 +426,7 @@ layers configuration. You are free to put any user code."
      nil "")))
  '(package-selected-packages
    (quote
-    (fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
@@ -412,7 +441,6 @@ layers configuration. You are free to put any user code."
  '(shr-external-browser (quote eww-browse-url))
  '(trash-directory "~/.Trash"))
 
-;; .spacemacs is 479 lines long
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
