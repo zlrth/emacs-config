@@ -18,6 +18,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     latex
      markdown
      csv
      html
@@ -201,7 +202,7 @@ values."
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
    ;; global-visual-line-mode t ;; disabling? not sure if i want this. i get line-escapes at the edge of a window.
-   word-wrap t ;; TODO does this work?
+   word-wrap t ;; TODO does this work? EDIT: NO
    evil-escape-key-sequence "kj"
    ))
 
@@ -220,16 +221,14 @@ layers configuration. You are free to put any user code."
   (setq system-uses-terminfo nil)
   (spacemacs/toggle-mode-line-org-clock-on)
 
-  ;; (add-to-list 'org-modules 'org-habit)
-
-  ;; this might work
-  ;; (add-hook 'shell-mode-hook #'(lambda () (smartparens-mode 0)))
-
   (add-hook 'org-mode-hook 'toggle-word-wrap)
+  (add-hook 'clojure-mode-hook (lambda () (paredit-mode t)))
+
 
   (defun really-kill-emacs ()
     (interactive)
     (let (kill-emacs-hook) (kill-emacs)))
+
   (define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
 
   (defun m/open-terminal ()
@@ -240,8 +239,6 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "qq") 'quit-window)
   (define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
 
-  ;; (global-set-key (kbd "M-x")     'helm-M-x) ;; i think this is the default
-  ;; (define-key evil-normal-state-map (kbd "SPC :")  'helm-M-x)
   (define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
   (define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
@@ -256,11 +253,9 @@ layers configuration. You are free to put any user code."
 
   (define-key evil-normal-state-map (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test)
   (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
-  (define-key evil-normal-state-map (kbd "SPC SPC") nil)
-  (global-set-key [C-tab]         'dabbrev-expand)
-  (global-set-key (kbd "C-x C-c") 'nil) ;; default \C-x\C-c is too easy to hit accidentally
-
-  (define-key evil-normal-state-map (kbd "SPC SPC") 'kmacro-end-and-call-macro)
+  (define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
+  ;; (global-set-key [C-tab]         'dabbrev-expand)
+  (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
 
   (defun m/org-goto-selection ()
     (interactive)
@@ -300,10 +295,9 @@ layers configuration. You are free to put any user code."
   (setq debug-on-error t)
   (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
 
-
-
-
   (setq inferior-shen-program "java -jar /Users/matt/hacking/shen/shen.clj/shen.clj-0.1.8-SNAPSHOT/shen.clj-0.1.8-SNAPSHOT-standalone.jar") ;; TODO could i put all of these setq's up in setq-default?
+
+
 
   (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)) ;; TODO do i need this?
 
@@ -410,14 +404,19 @@ layers configuration. You are free to put any user code."
 %T
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
+ '(org-habit-graph-column 80)
  '(org-modules
    (quote
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(org-refile-targets
    (quote
-    ((org-agenda-files :regexp . "paypal")
+    ((org-agenda-files :regexp . "someday to read")
+     (org-agenda-files :regexp . "catapult")
+     (org-agenda-files :regexp . "UR")
+     (org-agenda-files :regexp . "paypal")
      (org-agenda-files :regexp . "jokes")
-     (org-agenda-files :regexp . "time spent"))))
+     (org-agenda-files :regexp . "time spent")
+     (org-agenda-files :regexp . "ephemeral"))))
  '(org-startup-truncated nil)
  '(org-stuck-projects
    (quote
@@ -426,7 +425,7 @@ layers configuration. You are free to put any user code."
      nil "")))
  '(package-selected-packages
    (quote
-    (alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
