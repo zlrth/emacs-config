@@ -18,6 +18,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     php
      yaml
      latex
      markdown
@@ -249,6 +250,8 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
   (define-key evil-normal-state-map (kbd "SPC d f") 'm/edit-schedule)
   (define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
+  (define-key evil-normal-state-map (kbd "SPC d r") 'window-configuration-to-register)
+  (define-key evil-normal-state-map (kbd "SPC d j") 'jump-to-register)
   (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
   (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
 
@@ -296,8 +299,7 @@ layers configuration. You are free to put any user code."
   (setq debug-on-error t)
   (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
 
-  (setq inferior-shen-program "java -jar /Users/matt/hacking/shen/shen.clj/shen.clj-0.1.8-SNAPSHOT/shen.clj-0.1.8-SNAPSHOT-standalone.jar") ;; TODO could i put all of these setq's up in setq-default?
-
+  (setq inferior-shen-program " /Users/matt/hacking/shen/shen-json/shen") ;; TODO could i put all of these setq's up in setq-default?
 
 
   (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)) ;; TODO do i need this?
@@ -426,7 +428,7 @@ layers configuration. You are free to put any user code."
      nil "")))
  '(package-selected-packages
    (quote
-    (tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
