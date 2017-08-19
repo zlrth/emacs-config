@@ -18,13 +18,17 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     react
+     python
+     typescript
      php
      yaml
      latex
      markdown
      csv
      html
-     clojure
+     clojure ;; :variables clojure-enable-fancify-symbols t ;; put in a () if you want this. dunno if it's buggy
+     common-lisp
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -52,7 +56,7 @@ values."
                                       pdf-tools
                                       gnu-apl-mode
                                       shen-mode
-
+                                      sicp
                                       ;;org-bullets ;; i think i don't need this
                                       org-beautify-theme
                                        )
@@ -106,9 +110,9 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Verdana"
+   dotspacemacs-default-font '("Monaco"
                                :size 12
-                               :weight thin
+                               :weight bold ;; bold is normal and normal is bold. wtf.
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader ke
@@ -204,9 +208,7 @@ values."
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
    ;; global-visual-line-mode t ;; disabling? not sure if i want this. i get line-escapes at the edge of a window.
-   word-wrap t ;; TODO does this work? EDIT: NO
-   evil-escape-key-sequence "kj"
-   ))
+   evil-escape-key-sequence "kj"))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
@@ -218,14 +220,43 @@ user code."
   "Configuration function for user code.
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-  (load-file "~/.private/emacs-feeds-and-private.el")
+  (if (file-exists-p "~/.private/emacs-feeds-and-private.el")
+      (load-file "~/.private/emacs-feeds-and-private.el"))
 
   (setq system-uses-terminfo nil)
+  (setq github-paradox-token "56c88d91b8464deae4ad605efc8cbaf766f42de2")
   (spacemacs/toggle-mode-line-org-clock-on)
 
   (add-hook 'org-mode-hook 'toggle-word-wrap)
-  (add-hook 'clojure-mode-hook (lambda () (paredit-mode t)))
+  (add-hook 'clojure-mode-hook (lambda ()
+                                 (paredit-mode t)
+                                 (rainbow-delimiters-mode-disable)))
+  (add-hook 'lisp-mode-hook (lambda ()
+                              (paredit-mode t)
+                              (rainbow-delimiters-mode-disable)))
+  (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)))
+  (add-hook 'org-mode-hook (lambda () (toggle-word-wrap t)))
+  ;; this may work
+  (setq-default word-wrap t)
 
+  ;; https://www.emacswiki.org/emacs/ShellDirtrackByPrompt#toc2
+  ;; doesn't work. wtf. shell-dirtrack-mode nil doesn't work.
+  ;; july 4 2017. maybe i fixed a bug in my regex. but it still doesn't work. don't know why.
+  (add-hook 'shell-mode-hook
+            (lambda ()
+              (setq dirtrack-list '("|mfm|\\([^|]*\\)|" 1 nil))
+              (shell-dirtrack-mode nil)
+              (setq dirtrackp nil)
+              (dirtrack-mode)))
+
+(setq comint-input-ring-size 100000)
+;; https://emacs.stackexchange.com/a/22295
+(defun my-command-history-hook ()
+  (setq comint-input-ring-file-name "~/.zsh_history")
+  (setq comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);")
+  (comint-read-input-ring t))
+
+(add-hook 'shell-mode-hook 'my-command-history-hook)
 
   (defun really-kill-emacs ()
     (interactive)
@@ -237,72 +268,184 @@ layers configuration. You are free to put any user code."
     (interactive)
     (shell (generate-new-buffer-name "shell")))
 
-  (define-key evil-normal-state-map (kbd "q") nil) ;; this is a way to make 'q' a prefix key
-  (define-key evil-normal-state-map (kbd "qq") 'quit-window)
-  (define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
-
-  (define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
-  (define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
-  (define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
-  (define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
-  (define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
-  (define-key evil-normal-state-map (kbd "SPC d c")  'm/org-goto-selection)
-  (define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
-  (define-key evil-normal-state-map (kbd "SPC d f") 'm/edit-schedule)
-  (define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
-  (define-key evil-normal-state-map (kbd "SPC d r") 'window-configuration-to-register)
-  (define-key evil-normal-state-map (kbd "SPC d j") 'jump-to-register)
-  (define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
-  (define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
-
-  (define-key evil-normal-state-map (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test)
-  (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
-  (define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
-  ;; (global-set-key [C-tab]         'dabbrev-expand)
-  (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
-
-  (defun m/org-goto-selection ()
-    (interactive)
-    (org-clock-goto 'SELECT)
-    (org-clock-in))
-
-  (defun m/edit-dot-spacemacs ()
-    (interactive)
-    (find-file "~/.spacemacs"))
-
-  (defun m/edit-schedule ()
-    (interactive)
-    (find-file "~/org/schedule.org"))
-
-  (defun m/insert-interruption ()
-    (interactive)
-    (org-capture nil "i"))
-
-  (defun m/split-window-and-ask-for-buffer ()
-    (interactive)
-    (split-window-right-and-focus)
-    (helm-buffers-list))
-
-  ;; OSX annoyances
-  (global-unset-key (kbd "s-t"))
-
-  (setq projectile-enable-caching t)
-  (global-evil-search-highlight-persist nil)
-  (evil-set-initial-state 'elfeed-show-mode 'insert)
-  (evil-set-initial-state 'elfeed-search-mode 'insert)
-  (setq helm-M-x-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-recentf-fuzzy-match t)
-  (setq helm-semantic-fuzzy-match t)
-  (setq helm-imenu-fuzzy-match t)
-
-  (setq debug-on-error t)
-  (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
-
-  (setq inferior-shen-program " /Users/matt/hacking/shen/shen-json/shen") ;; TODO could i put all of these setq's up in setq-default?
+  (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
 
 
-  (defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 140 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default)) ;; TODO do i need this?
+
+(defun org-refile-to-time-spent ()
+  (interactive)
+  (org-refile))
+
+  (define-key evil-normal-state-map (kbd "#") 'refile-to-time-spent)
+
+(evil-define-key 'normal clojure-mode-map (kbd ", b") 'start-cider-project)
+
+(defun foo-function ()
+  (interactive)
+  (message "bar"))
+
+(rainbow-delimiters-mode-disable)
+(indent-guide-mode)
+
+;; FACKING HELL
+;; (evil-define-key 'normal clojure-mode-map ",b" 'start-cider-project)
+
+;; (define-key clojure-mode-map (kbd ",b") 'start-cider-project)
+
+;; (evil-define-key 'normal clojure-mode-map (kbd ",b") 'start-cider-project)
+;; (evil-define-key 'normal clojure-mode-map ", b" 'start-cider-project)
+;; (evil-define-key 'normal cider-mode-map ", b" 'start-cider-project)
+
+;; (define-key spacemacs-cider-clojure-interaction-mode-map (kbd ", b") 'start-cider-project)
+;; (define-key spacemacs-clojure-mode-map-active (kbd ", b") 'start-cider-project)
+
+(define-key evil-normal-state-map (kbd "C-u") 'prefix-arg) ;; this is a way to make 'q' a prefix key
+
+(define-key evil-normal-state-map (kbd "q") nil) ;; this is a way to make 'q' a prefix key
+(define-key evil-normal-state-map (kbd "qq") 'quit-window)
+(define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
+
+(define-key evil-normal-state-map (kbd "SPC d u")  'clojure-fill-paragraph)
+(define-key evil-normal-state-map (kbd "SPC d l")  'toggle-truncate-lines)
+(define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
+(define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
+(define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
+(define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
+(define-key evil-normal-state-map (kbd "SPC d c")  'm/org-goto-selection)
+(define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
+(define-key evil-normal-state-map (kbd "SPC d f") 'm/edit-schedule)
+(define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
+(define-key evil-normal-state-map (kbd "SPC d r") 'window-configuration-to-register)
+(define-key evil-normal-state-map (kbd "SPC d j") 'jump-to-register)
+(define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
+(define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
+
+(define-key evil-normal-state-map (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test)
+(define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
+(define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
+(global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
+
+(define-key evil-normal-state-map (kbd ", t e") 'm/eval-sexp-and-clojure-test)
+
+
+(fset 'refile-to-time-spent
+      (lambda (&optional arg)
+        "Keyboard macro."
+        (interactive "p")
+        (kmacro-exec-ring-item
+         (quote ([44 82 116 105 109 101 32 115 112 101 110 116 return] 0 "%d")) arg)))
+
+
+
+(defun cider-jack-in-with-start-figwheel (&optional prompt-project cljs-too)
+  "Start an nREPL server for the current project and connect to it.
+If PROMPT-PROJECT is t, then prompt for the project for which to
+start the server.
+If CLJS-TOO is non-nil, also start a ClojureScript REPL session with its
+own buffer."
+  (interactive "P")
+  (setq cider-current-clojure-buffer (current-buffer))
+  (let* ((project-type (cider-project-type))
+         (command (cider-jack-in-command project-type))
+         (command-resolved (cider-jack-in-resolve-command project-type))
+         (command-global-opts (cider-jack-in-global-options project-type))
+         (command-params (cider-jack-in-params project-type)))
+    (if command-resolved
+        (let* ((project (when prompt-project
+                          (read-directory-name "Project: ")))
+               (project-dir (clojure-project-dir
+                             (or project (cider-current-dir))))
+               (params (if prompt-project
+                           (read-string (format "nREPL server command: %s "
+                                                command-params)
+                                        command-params)
+                         command-params))
+               (params (if cider-inject-dependencies-at-jack-in
+                           (cider-inject-jack-in-dependencies command-global-opts params project-type)
+                         params))
+
+               (cmd (format "%s %s" command-resolved params)))
+          (if (or project-dir cider-allow-jack-in-without-project)
+              (progn
+                (when (or project-dir
+                          (eq cider-allow-jack-in-without-project t)
+                          (and (null project-dir)
+                               (eq cider-allow-jack-in-without-project 'warn)
+                               (y-or-n-p "Are you sure you want to run `cider-jack-in' without a Clojure project? ")))
+                  (when-let ((repl-buff (cider-find-reusable-repl-buffer nil project-dir)))
+                    (let ((nrepl-create-client-buffer-function  #'cider-repl-create)
+                          (nrepl-use-this-as-repl-buffer repl-buff))
+                      (nrepl-start-server-process
+                       project-dir cmd
+                       (lambda (client-buffer)
+                         (switch-to-buffer client-buffer)
+                         (sleep-for 1)
+                         (insert "(start-figwheel \"ios\")")
+                         (cider-repl-return)))))))
+            (user-error "`cider-jack-in' is not allowed without a Clojure project")))
+      (user-error "The %s executable isn't on your `exec-path'" command))))
+
+(defun start-cider-project ()
+  (interactive)
+  (cider-jack-in-with-start-figwheel)
+  (projectile-with-default-dir (projectile-project-root)
+    (async-shell-command "react-native run-ios > /dev/null" nil nil))) ;; want stdout and stderr for debugging? s!/> /dev/null!!
+
+
+(defun m/copy-apollo-tracker-to-clipboard ()
+  "so i don't have to keep finding this string in my org project.
+FIXME when i put this on github, put the string in private.el"
+  (interactive)
+  (ns-store-selection-internal 'CLIPBOARD "http://apollo.rip:2095/d986b2c39a9d02a31eefbb4c989835aa/announce"))
+
+(defun m/eval-sexp-and-clojure-test ()
+  (interactive)
+  (cider-eval-last-sexp)
+  (cider-test-run-test))
+
+(defun m/org-goto-selection ()
+  (interactive)
+  (org-clock-goto 'SELECT)
+  (org-clock-in))
+
+(defun m/edit-dot-spacemacs ()
+  (interactive)
+  (find-file "~/.spacemacs"))
+
+(defun m/edit-schedule ()
+  (interactive)
+  (find-file "~/org/schedule.org"))
+
+(defun m/insert-interruption ()
+  (interactive)
+  (org-capture nil "i"))
+
+(defun m/split-window-and-ask-for-buffer ()
+  (interactive)
+  (split-window-right-and-focus)
+  (helm-buffers-list))
+
+;; OSX annoyances
+(global-unset-key (kbd "s-t"))
+
+(setq projectile-enable-caching t)
+(global-evil-search-highlight-persist nil)
+(evil-set-initial-state 'elfeed-show-mode 'insert)
+(evil-set-initial-state 'elfeed-search-mode 'insert)
+(setq helm-M-x-fuzzy-match t)
+(setq helm-buffers-fuzzy-matching t)
+(setq helm-recentf-fuzzy-match t)
+(setq helm-semantic-fuzzy-match t)
+(setq helm-imenu-fuzzy-match t)
+
+(setq debug-on-error t)
+(setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
+
+(setq inferior-shen-program " /Users/matt/hacking/shen/shen-json/shen") ;; TODO could i put all of these setq's up in setq-default?
+
+
+(defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight extralight :height 120 :width normal :foundry "unknown" :family "Operator MOno"))) "default face" :group 'default)) ;; TODO do i need this?
 
 
 
@@ -331,14 +474,20 @@ layers configuration. You are free to put any user code."
  '(desktop-save-mode t)
  '(dired-listing-switches
    "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
+ '(dired-recursive-deletes (quote always))
  '(dired-use-ls-dired (quote unspecified))
+ '(dirtrack-list (quote ("|mfm|  \\([^|]*\\)" 1)))
  '(evil-default-cursor (quote (hbar)))
+ '(evil-move-beyond-eol t)
+ '(evil-move-cursor-back nil)
  '(evil-want-Y-yank-to-eol t)
  '(fringe-mode 0 nil (fringe))
  '(global-evil-search-highlight-persist nil)
  '(global-undo-tree-mode t)
  '(helm-ag-use-agignore t)
+ '(inferior-lisp-program "sbcl" t)
  '(nrepl-log-messages t)
+ '(ns-antialias-text t)
  '(org-agenda-custom-commands
    (quote
     (("n" "Agenda and all TODOs"
@@ -369,9 +518,11 @@ layers configuration. You are free to put any user code."
 ")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
-      "**  %?
+      "** %?
+%a
 %T
-")
+%i" :clock-in t :clock-resume t
+)
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
       "**  %?
@@ -380,7 +531,7 @@ layers configuration. You are free to put any user code."
 %a")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
-      "**  %?
+      "** %?
 %T
 
 %a
@@ -402,6 +553,12 @@ layers configuration. You are free to put any user code."
 %?" :clock-in t :clock-resume t)
      ("i" "interruption" entry
       (file+headline "schedule.org" "interruptions")
+      "** %?
+%a
+%T
+%i" :clock-in t :clock-resume t)
+     ("w" "work note" entry
+      (file+headline "~/org/work.org" "spendgap refile")
       "**  %?
 %a
 %T
@@ -413,12 +570,12 @@ layers configuration. You are free to put any user code."
     (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
  '(org-refile-targets
    (quote
-    ((org-agenda-files :regexp . "someday to read")
+    ((org-agenda-files :regexp . "time spent")
+     (org-agenda-files :regexp . "someday to read")
      (org-agenda-files :regexp . "catapult")
      (org-agenda-files :regexp . "UR")
      (org-agenda-files :regexp . "paypal")
      (org-agenda-files :regexp . "jokes")
-     (org-agenda-files :regexp . "time spent")
      (org-agenda-files :regexp . "ephemeral"))))
  '(org-startup-truncated nil)
  '(org-stuck-projects
@@ -429,11 +586,12 @@ layers configuration. You are free to put any user code."
  '(package-selected-packages
    (quote
     (php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
    (quote
-    (".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes")))
+    ("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes")))
  '(projectile-globally-ignored-file-suffixes (quote (".class" "class")))
  '(projectile-globally-ignored-files
    (quote
@@ -448,5 +606,16 @@ layers configuration. You are free to put any user code."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight thin :height 120 :width normal :foundry "nil" :family "Verdana")))))
-
+ '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
+ '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
+ '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
+ '(font-lock-comment-face ((t (:foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
+ '(font-lock-constant-face ((t (:foreground "#ccaaff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-doc-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant normal :weight extra-light :height 0.9 :family "Verdana"))))
+ '(font-lock-function-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-keyword-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-preprocessor-face ((t (:foreground "#ff8888" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
