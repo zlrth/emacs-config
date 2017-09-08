@@ -18,6 +18,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     sql
      react
      python
      typescript
@@ -268,7 +269,7 @@ layers configuration. You are free to put any user code."
     (interactive)
     (shell (generate-new-buffer-name "shell")))
 
-  (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
+(evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
 
 
 
@@ -325,6 +326,7 @@ layers configuration. You are free to put any user code."
 (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
 (define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
 (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 
 (define-key evil-normal-state-map (kbd ", t e") 'm/eval-sexp-and-clojure-test)
 
@@ -336,6 +338,14 @@ layers configuration. You are free to put any user code."
         (kmacro-exec-ring-item
          (quote ([44 82 116 105 109 101 32 115 112 101 110 116 return] 0 "%d")) arg)))
 
+
+
+(defun spacemacs/cider-test-run-focused-test ()
+  "Run test around point."
+  (interactive)
+  (save-buffer)
+  (cider-load-buffer)
+  (cider-test-run-test))
 
 
 (defun cider-jack-in-with-start-figwheel (&optional prompt-project cljs-too)
