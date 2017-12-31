@@ -24,6 +24,7 @@ values."
      python
      yaml
      latex
+     pdf-tools
      markdown
      csv
      html
@@ -56,9 +57,9 @@ values."
                                       shen-mode
                                       org-projectile
                                       org-projectile-helm
-                                      ;;org-bullets ;; i think i don't need this
                                       org-beautify-theme
-                                       )
+                                      (j-mode :location (recipe :fetcher github :repo "zlrth/j-mode"))
+                                     )
 
     ;; A list of packages and/or extensions that will not be install and loaded.
     ;; dotspacemacs-excluded-packages '(persp-mode
@@ -535,34 +536,27 @@ FIXME when i put this on github, put the string in private.el"
     ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
  '(org-capture-templates
    (quote
-    (("t" "wordpress freelancing" entry
-      (file+olp "~/org/home.org" "freelancing" "wordpress")
-      "**  %?
-%a
-%T
-%i
-")
-     ("e" "emacs annoyances" entry
+    (("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "**  %?
-%T
+%U
 ")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
       "** %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t)
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
       "**  %?
-%T
+%U
 
 %a")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
       "** %?
-%T
+%U
 
 %a
 %i
@@ -571,12 +565,12 @@ FIXME when i put this on github, put the string in private.el"
      ("f" "food" entry
       (file+headline "~/org/schedule.org" "food")
       "**  %?
-%T
+%U
 ")
      ("d" "diary entry" entry
       (file+headline "notes.org" "diary")
       "** 
-%T
+%U
 
 %a
 %i
@@ -585,13 +579,13 @@ FIXME when i put this on github, put the string in private.el"
       (file+headline "schedule.org" "interruptions")
       "** %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t)
      ("w" "work note" entry
       (file+headline "~/org/work.org" "spendgap refile")
       "**  %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
  '(org-habit-graph-column 80)
@@ -691,6 +685,7 @@ This function is called at the very end of Spacemacs initialization."
  '(global-undo-tree-mode t)
  '(helm-ag-use-agignore t)
  '(inferior-lisp-program "sbcl" t)
+ '(j-console-cmd "/Applications/j64-804/bin/jconsole")
  '(nrepl-log-messages t)
  '(ns-antialias-text t)
  '(org-agenda-custom-commands
@@ -706,37 +701,30 @@ This function is called at the very end of Spacemacs initialization."
          ("-reading" "-food" "-interrupt"))))))))
  '(org-agenda-files
    (quote
-    ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org" "~/org/notes.org")))
+    ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
  '(org-capture-templates
    (quote
-    (("t" "wordpress freelancing" entry
-      (file+olp "~/org/home.org" "freelancing" "wordpress")
-      "**  %?
-%a
-%T
-%i
-")
-     ("e" "emacs annoyances" entry
+    (("e" "emacs annoyances" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "**  %?
-%T
+%U
 ")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
       "** %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t)
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
       "**  %?
-%T
+%U
 
 %a")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
       "** %?
-%T
+%U
 
 %a
 %i
@@ -745,12 +733,12 @@ This function is called at the very end of Spacemacs initialization."
      ("f" "food" entry
       (file+headline "~/org/schedule.org" "food")
       "**  %?
-%T
+%U
 ")
      ("d" "diary entry" entry
       (file+headline "notes.org" "diary")
       "** 
-%T
+%U
 
 %a
 %i
@@ -759,13 +747,13 @@ This function is called at the very end of Spacemacs initialization."
       (file+headline "schedule.org" "interruptions")
       "** %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t)
      ("w" "work note" entry
       (file+headline "~/org/work.org" "spendgap refile")
       "**  %?
 %a
-%T
+%U
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
  '(org-habit-graph-column 80)
@@ -780,8 +768,7 @@ This function is called at the very end of Spacemacs initialization."
      (org-agenda-files :regexp . "UR")
      (org-agenda-files :regexp . "paypal")
      (org-agenda-files :regexp . "jokes")
-     (org-agenda-files :regexp . "ephemeral")
-     (org-agenda-files :regexp . "quotes"))))
+     (org-agenda-files :regexp . "ephemeral"))))
  '(org-startup-truncated nil)
  '(org-stuck-projects
    (quote
@@ -790,7 +777,7 @@ This function is called at the very end of Spacemacs initialization."
      nil "")))
  '(package-selected-packages
    (quote
-    (floobits org-projectile-helm auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (j-mode org-projectile-helm auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
@@ -823,5 +810,6 @@ This function is called at the very end of Spacemacs initialization."
  '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 )
