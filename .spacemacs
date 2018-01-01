@@ -274,15 +274,15 @@ layers configuration. You are free to put any user code."
 
 (add-hook 'shell-mode-hook 'my-command-history-hook)
 
-  (defun really-kill-emacs ()
-    (interactive)
-    (let (kill-emacs-hook) (kill-emacs)))
+(defun really-kill-emacs ()
+  (interactive)
+  (let (kill-emacs-hook) (kill-emacs)))
 
-  (define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
+(define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
 
-  (defun m/open-terminal ()
-    (interactive)
-    (shell (generate-new-buffer-name "shell")))
+(defun m/open-terminal ()
+  (interactive)
+  (shell (generate-new-buffer-name "shell")))
 
 (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
 
@@ -303,18 +303,6 @@ layers configuration. You are free to put any user code."
 
 (rainbow-delimiters-mode-disable)
 (indent-guide-mode)
-
-;; FACKING HELL
-;; (evil-define-key 'normal clojure-mode-map ",b" 'start-cider-project)
-
-;; (define-key clojure-mode-map (kbd ",b") 'start-cider-project)
-
-;; (evil-define-key 'normal clojure-mode-map (kbd ",b") 'start-cider-project)
-;; (evil-define-key 'normal clojure-mode-map ", b" 'start-cider-project)
-;; (evil-define-key 'normal cider-mode-map ", b" 'start-cider-project)
-
-;; (define-key spacemacs-cider-clojure-interaction-mode-map (kbd ", b") 'start-cider-project)
-;; (define-key spacemacs-clojure-mode-map-active (kbd ", b") 'start-cider-project)
 
 (define-key evil-normal-state-map (kbd "C-u") 'prefix-arg) ;; this is a way to make 'q' a prefix key
 
