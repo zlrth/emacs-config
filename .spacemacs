@@ -214,6 +214,20 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (with-eval-after-load 'j-mode
+    (evil-define-key 'normal j-mode-map
+      (kbd ", b") 'j-console-execute-line
+      (kbd ", s") 'j-console
+      (kbd ", h") 'j-help-lookup-symbol-at-point
+      (kbd ", H") 'j-help-lookup-symbol))
+
+  (with-eval-after-load 'eww-mode
+    (evil-define-key 'normal eww-mode-map
+      (kbd ", l") 'j-console-execute-line
+      (kbd ", h") 'j-help-lookup-symbol-at-point
+      (kbd ", H") 'j-help-lookup-symbol))
+  (with-eval-after-load 'clojure-mode
+    (evil-define-key 'normal clojure-mode-map (kbd ", b") 'start-cider-project))
   )
 
 (defun dotspacemacs/user-config ()
@@ -272,6 +286,8 @@ layers configuration. You are free to put any user code."
 
 (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
 
+;; TODO j-jump-to-inf-buffer
+;; TODO open eww in fixed opposing buffer
 
 
 (defun org-refile-to-time-spent ()
@@ -280,7 +296,6 @@ layers configuration. You are free to put any user code."
 
   (define-key evil-normal-state-map (kbd "#") 'refile-to-time-spent)
 
-(evil-define-key 'normal clojure-mode-map (kbd ", b") 'start-cider-project)
 
 (defun foo-function ()
   (interactive)
@@ -753,7 +768,7 @@ This function is called at the very end of Spacemacs initialization."
       (file+headline "~/org/work.org" "spendgap refile")
       "**  %?
 %a
-%U
+%T
 %i" :clock-in t :clock-resume t))))
  '(org-clock-mode-line-total (quote current))
  '(org-habit-graph-column 80)
@@ -810,6 +825,7 @@ This function is called at the very end of Spacemacs initialization."
  '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(j-conjunction-face ((t (:foreground "IndianRed1"))))
  '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 )
