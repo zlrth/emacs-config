@@ -303,27 +303,26 @@ layers configuration. You are free to put any user code."
 (define-key evil-normal-state-map (kbd "C-u") 'prefix-arg)
 
 (define-key evil-normal-state-map (kbd "q") nil) ;; this is a way to make 'q' a prefix key
-(define-key evil-normal-state-map
-  (kbd "qq") 'quit-window
-  (kbd "qm")  'evil-record-macro
-  (kbd "SPC d u")  'clojure-fill-paragraph
-  (kbd "SPC d l")  'toggle-truncate-lines
-  (kbd "SPC d t")  'm/open-terminal
-  (kbd "SPC d a")  'evil-numbers/inc-at-pt
-  (kbd "SPC d m")  'magit-status
-  (kbd "SPC d r")  'rename-buffer
-  (kbd "SPC a o j")  'org-clock-jump-to-current-clock
-  (kbd "SPC d c")  'm/org-goto-selection
-  (kbd "SPC d s") 'm/edit-dot-spacemacs
-  (kbd "SPC d f") 'm/edit-schedule
-  (kbd "SPC d i") 'm/insert-interruption
-  (kbd "SPC d r") 'window-configuration-to-register
-  (kbd "SPC d j") 'jump-to-register
-  (kbd "SPC w /") 'm/split-window-and-ask-for-buffer
-  (kbd "SPC p s F")  'ag-project-files-current-current-file-extension
-  (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test
-  (kbd "C-d") 'evil-scroll-down
-  (kbd "SPC SPC") 'org-capture)
+(define-key evil-normal-state-map (kbd "qq") 'quit-window)
+(define-key evil-normal-state-map (kbd "qm")  'evil-record-macro)
+(define-key evil-normal-state-map (kbd "SPC d u")  'clojure-fill-paragraph)
+(define-key evil-normal-state-map (kbd "SPC d l")  'toggle-truncate-lines)
+(define-key evil-normal-state-map (kbd "SPC d t")  'm/open-terminal)
+(define-key evil-normal-state-map (kbd "SPC d a")  'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map (kbd "SPC d m")  'magit-status)
+(define-key evil-normal-state-map (kbd "SPC d r")  'rename-buffer)
+(define-key evil-normal-state-map (kbd "SPC a o j")  'org-clock-jump-to-current-clock)
+(define-key evil-normal-state-map (kbd "SPC d c")  'm/org-goto-selection)
+(define-key evil-normal-state-map (kbd "SPC d s") 'm/edit-dot-spacemacs)
+(define-key evil-normal-state-map (kbd "SPC d f") 'm/edit-schedule)
+(define-key evil-normal-state-map (kbd "SPC d i") 'm/insert-interruption)
+(define-key evil-normal-state-map (kbd "SPC d r") 'window-configuration-to-register)
+(define-key evil-normal-state-map (kbd "SPC d j") 'jump-to-register)
+(define-key evil-normal-state-map (kbd "SPC w /") 'm/split-window-and-ask-for-buffer)
+(define-key evil-normal-state-map (kbd "SPC p s F")  'ag-project-files-current-current-file-extension)
+(define-key evil-normal-state-map (kbd "SPC p t")  'projectile-toggle-between-implementation-and-test)
+(define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
+(define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
 
 (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
