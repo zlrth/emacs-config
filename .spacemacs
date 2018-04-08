@@ -264,7 +264,7 @@ layers configuration. You are free to put any user code."
   ;; july 4 2017. maybe i fixed a bug in my regex. but it still doesn't work. don't know why.
   (add-hook 'shell-mode-hook
             (lambda ()
-              (setq dirtrack-list '("|mfm|\\([^|]*\\)|" 1 nil))
+              (setq dirtrack-list '("|mfm| \\([^|]*\\)|" 1 nil))
               (shell-dirtrack-mode nil)
               (setq dirtrackp nil)
               (dirtrack-mode)))
