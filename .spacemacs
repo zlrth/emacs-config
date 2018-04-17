@@ -289,6 +289,9 @@ layers configuration. You are free to put any user code."
 
 (define-key evil-normal-state-map (kbd "SPC q Q")  'really-kill-emacs)
 
+(define-key evil-normal-state-map (kbd "SPC :")  'helm-M-x) ;; this was diabled for some reason?
+(define-key evil-normal-state-map (kbd "C-x C-o")  'other-window) ;; 
+
 (defun m/open-terminal ()
   (interactive)
   (shell (generate-new-buffer-name "shell")))
@@ -513,6 +516,19 @@ FIXME when i put this on github, put the string in private.el"
     (define-key map [(meta n)] 'eww-next-bookmark)
     (define-key map [(meta p)] 'eww-previous-bookmark)
 
+    (defun m/kill-matching-buffers (regexp &optional internal-too)
+      "Kill buffers whose name matches the specified REGEXP.
+The optional second argument indicates whether to kill internal buffers too."
+      (interactive "sKill buffers matching this regular expression: \nP")
+      (dolist (buffer (buffer-list))
+        (let ((name (buffer-name buffer)))
+          (when (and name (not (string-equal name ""))
+                     (or internal-too (/= (aref name 0) ?\s))
+                     (string-match regexp name))
+            (switch-to-buffer buffer)
+            (kill-buffer-ask buffer)))))
+
+    (count (buffer-list))
 
     (easy-menu-define nil map ""
       '("Eww"
