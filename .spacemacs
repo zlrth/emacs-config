@@ -17,7 +17,7 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(
+   '(ansible
      ;; ansible
 
      graphviz
@@ -27,7 +27,7 @@ values."
      python
      yaml
      latex
-     ;; pdf-tools
+     pdf
      markdown
      csv
      html
@@ -55,7 +55,6 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      pdf-tools
                                       gnu-apl-mode
                                       shen-mode
                                       org-projectile
@@ -192,6 +191,8 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters the
    ;; point when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
+   ;; tests broke so i added this. other options are 'spacemacs, custom, vim-powerline, vanilla
+   dotspacemacs-mode-line-theme 'spacemacs
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -240,7 +241,10 @@ user code."
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
-  (setq insert-directory-program (executable-find "gls"))
+  (let ((gls (executable-find "gls")))
+    (when gls
+      (setq insert-directory-program gls)))
+  (require 'pdf-tools)
 
   (require 'ob-clojure)
   (require 'cider)
@@ -311,7 +315,7 @@ layers configuration. You are free to put any user code."
 (define-key evil-normal-state-map (kbd "C-x C-k")  'kill-this-buffer)
 (define-key evil-normal-state-map (kbd "C-x k")  'kill-this-buffer)
 
-
+(define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)
 
 (defun m/open-terminal ()
   (interactive)
@@ -608,7 +612,9 @@ FIXME when i put this on github, put the string in private.el"
 
 ;; this is set in layers/+distributions/spacemacs-base/config.el. in dired, it moves the cursor around after renaming a file, which is driving me crazy. disabled.
 ;; Auto refresh
-(global-auto-revert-mode nil)
+(global-auto-revert-mode t)
+;; i set this to nil but now i want it to be `t'. isn't life funny.
+
 ;; july 7 2018. this is enabled. what.
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers nil
@@ -644,12 +650,7 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-print-options nil)
  '(cider-repl-history-file "~/emacs-files/cider-history")
  '(cider-repl-print-length 1000000)
- '(cider-repl-prompt-function
-   (lambda
-     (namespace)
-     (format-time-string "%H:%M:%S")
-     (format "%s>
-" namespace)))
+ '(cider-repl-prompt-function (quote cider-repl-prompt-abbreviated))
  '(column-number-mode t)
  '(company-files-exclusions ".org")
  '(compilation-message-face (quote default))
@@ -665,7 +666,8 @@ This function is called at the very end of Spacemacs initialization."
  '(debug-on-error nil)
  '(desktop-save t)
  '(desktop-save-mode t)
- '(dired-listing-switches "-al --group-directories-first")
+ '(dired-listing-switches
+   "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
  '(dired-recursive-deletes (quote always))
  '(dired-use-ls-dired (quote unspecified))
  '(dirtrack-list (quote ("|mfm|  \\([^|]*\\)" 1)))
@@ -788,8 +790,10 @@ This function is called at the very end of Spacemacs initialization."
      nil "")))
  '(package-selected-packages
    (quote
-    (org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
+ '(pdf-view-use-imagemagick t)
+ '(pdf-view-use-scaling t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
@@ -801,6 +805,12 @@ This function is called at the very end of Spacemacs initialization."
     ("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#")))
  '(projectile-indexing-method (quote native))
  '(read-buffer-completion-ignore-case t)
+ '(safe-local-variable-values
+   (quote
+    ((cider-ns-refresh-after-fn . "integrant.repl/resume")
+     (cider-ns-refresh-before-fn . "integrant.repl/suspend")
+     (javascript-backend . tern)
+     (javascript-backend . lsp))))
  '(same-window-buffer-names (quote ("*inferior-shen*" "*cider-error*")))
  '(shr-external-browser (quote eww-browse-url))
  '(tramp-default-method "ssh" nil (tramp))
@@ -827,203 +837,7 @@ This function is called at the very end of Spacemacs initialization."
  '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 )
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#292929" "#ff3333" "#aaffaa" "#aaeecc" "#aaccff" "#FF1F69" "#aadddd" "#999999"])
- '(background-color "#202020")
- '(background-mode dark)
- '(buffer-stack-untracked
-   (quote
-    ("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*")))
- '(cider-pprint-fn (quote pprint))
- '(cider-print-fn (quote fipp))
- '(cider-print-options nil)
- '(cider-repl-history-file "~/emacs-files/cider-history")
- '(cider-repl-print-length 1000000)
- '(cider-repl-prompt-function
-   (lambda
-     (namespace)
-     (format-time-string "%H:%M:%S")
-     (format "%s>
-" namespace)))
- '(column-number-mode t)
- '(company-files-exclusions ".org")
- '(compilation-message-face (quote default))
- '(completion-ignored-extensions
-   (quote
-    (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
- '(csv-separators (quote ("," "	" "	")))
- '(cursor-color "#cccccc")
- '(custom-enabled-themes (quote (noctilux)))
- '(custom-safe-themes
-   (quote
-    ("4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
- '(debug-on-error nil)
- '(desktop-save t)
- '(desktop-save-mode t)
- '(dired-recursive-deletes (quote always))
- '(dired-use-ls-dired (quote unspecified))
- '(dirtrack-list (quote ("|mfm|  \\([^|]*\\)" 1)))
- '(evil-default-cursor (quote (hbar)))
- '(evil-move-beyond-eol t)
- '(evil-move-cursor-back nil)
- '(evil-want-Y-yank-to-eol t)
- '(foreground-color "#cccccc")
- '(fringe-mode nil nil (fringe))
- '(global-auto-revert-mode nil)
- '(global-evil-search-highlight-persist nil)
- '(global-undo-tree-mode t)
- '(helm-ag-use-agignore t)
- '(inferior-lisp-program "sbcl" t)
- '(isearch-allow-scroll t)
- '(j-console-cmd "/Applications/j64-804/bin/jconsole")
- '(js2-strict-missing-semi-warning nil)
- '(nrepl-log-messages t)
- '(nrepl-sync-request-timeout 30)
- '(ns-antialias-text t)
- '(org-agenda-custom-commands
-   (quote
-    (("n" "Agenda and all TODOs"
-      ((agenda "" nil)
-       (alltodo "" nil))
-      nil)
-     ("x" agenda "doesn't have data like :food:interruptions:reading:"
-      ((org-agenda-ndays 7)
-       (org-agenda-filter-preset
-        (quote
-         ("-reading" "-food" "-interrupt"))))))))
- '(org-agenda-files
-   (quote
-    ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
- '(org-capture-templates
-   (quote
-    (("e" "emacs annoyances TEST" entry
-      (file+headline "~/org/home.org" "emacs annoyances")
-      "**  %?
-%U
-")
-     ("q" "quote" plain
-      (file+headline "~/org/notes.org" "quotes")
-      "** %?
-%a
-%U
-%i
-" :clock-in t :clock-resume t)
-     ("n" "note" plain
-      (file+headline "~/org/notes.org" "Notes")
-      "**  %?
-%U
 
-%a")
-     ("s" "someday to read" entry
-      (file+headline "~/org/home.org" "someday to read")
-      "** %?
-%U
 
-%a
-%i
-
-")
-     ("f" "food" entry
-      (file+headline "~/org/schedule.org" "food")
-      "**  %?
-%U
-")
-     ("d" "diary entry" entry
-      (file+headline "notes.org" "diary")
-      "** 
-%U
-
-%a
-%i
-%?
-" :clock-in t :clock-resume t)
-     ("i" "interruption" entry
-      (file+headline "schedule.org" "interruptions")
-      "** %?
-%a
-%U
-%i" :clock-in t :clock-resume t)
-     ("w" "work note" entry
-      (file+headline "~/org/work.org" "spendgap refile")
-      "**  %?
-%a
-%U
-%i" :clock-in t :clock-resume t)
-     ("j" "jokes" entry
-      (file+headline "~/org/home.org" "jokes")
-      "** %?")
-     ("o" "word definition" entry
-      (file+headline "schedule.org" "definitions")
-      "** %?
-%a
-%U
-%i" :clock-in t :clock-resume t))))
- '(org-clock-mode-line-total (quote current))
- '(org-confirm-babel-evaluate nil)
- '(org-habit-graph-column 80)
- '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
- '(org-refile-targets
-   (quote
-    ((org-agenda-files :regexp . "time spent")
-     (org-agenda-files :regexp . "someday to read")
-     (org-agenda-files :regexp . "catapult")
-     (org-agenda-files :regexp . "UR")
-     (org-agenda-files :regexp . "paypal")
-     (org-agenda-files :regexp . "jokes")
-     (org-agenda-files :regexp . "ephemeral"))))
- '(org-src-block-faces (quote (("clojure" default))))
- '(org-startup-truncated nil)
- '(org-stuck-projects
-   (quote
-    ("LEVEL>1/TODO"
-     ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
-     nil "")))
- '(package-selected-packages
-   (quote
-    (org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pdf-tools pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(paradox-github-token t)
- '(projectile-enable-caching t)
- '(projectile-global-mode t)
- '(projectile-globally-ignored-directories
-   (quote
-    ("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes")))
- '(projectile-globally-ignored-file-suffixes (quote (".class" "class")))
- '(projectile-globally-ignored-files
-   (quote
-    ("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#")))
- '(projectile-indexing-method (quote native))
- '(read-buffer-completion-ignore-case t)
- '(same-window-buffer-names (quote ("*inferior-shen*" "*cider-error*")))
- '(shr-external-browser (quote eww-browse-url))
- '(tramp-default-method "ssh" nil (tramp))
- '(trash-directory "~/.Trash")
- '(vc-follow-symlinks t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
- '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
- '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
- '(font-lock-comment-face ((t (:foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
- '(font-lock-constant-face ((t (:foreground "#ccaaff" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-doc-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant normal :weight extra-light :height 0.9 :family "Verdana"))))
- '(font-lock-function-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-keyword-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-preprocessor-face ((t (:foreground "#ff8888" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
- '(j-conjunction-face ((t (:foreground "IndianRed1"))))
- '(j-other-face ((t (:foreground "plum1"))))
- '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 
 
