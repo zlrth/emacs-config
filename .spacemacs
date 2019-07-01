@@ -17,7 +17,9 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(ansible
+   '(typescript
+     ansible
+     idris
      ;; ansible
 
      graphviz
@@ -27,7 +29,7 @@ values."
      python
      yaml
      latex
-     pdf
+     ;; pdf
      markdown
      csv
      html
@@ -234,6 +236,15 @@ user code."
       (kbd ", h") 'j-help-lookup-symbol-at-point
       (kbd ", H") 'j-help-lookup-symbol))
 
+  ;; crackin skulls. doesn't work. but 'toggle-menu-bar-mode-from-frame might
+  (with-eval-after-load 'clojure-mode
+    (define-key clojure-mode-map [menu-bar options] nil)
+    (define-key clojure-mode-map [menu-bar YASnippet] nil) ;; doesn't work
+    (define-key clojure-mode-map [menu-bar edit] nil)
+    (define-key clojure-mode-map [menu-bar buffer] nil)
+    (define-key clojure-mode-map [menu-bar tools] nil)
+    (define-key clojure-mode-map [menu-bar help-menu] nil)
+    (define-key clojure-mode-map [menu-bar file] nil))
   )
 
 (defun dotspacemacs/user-config ()
@@ -244,7 +255,8 @@ layers configuration. You are free to put any user code."
   (let ((gls (executable-find "gls")))
     (when gls
       (setq insert-directory-program gls)))
-  (require 'pdf-tools)
+
+  ;; (require 'pdf-tools)
 
   (require 'ob-clojure)
   (require 'cider)
@@ -254,6 +266,10 @@ layers configuration. You are free to put any user code."
 
   ;; this is bugging out
   ;; (evil-set-initial-state 'org-agenda-mode 'emacs)
+
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((clojure . t)))
@@ -535,13 +551,25 @@ FIXME when i put this on github, put the string in private.el"
 
 
 ;; these are bugging out?
-;; (define-key global-map [menu-bar options] nil)
-;; (define-key global-map [menu-bar YASnippet] nil) ;; doesn't work
-;; (define-key global-map [menu-bar edit] nil)
-;; (define-key global-map [menu-bar buffer] nil)
-;; (define-key global-map [menu-bar tools] nil)
-;; (define-key global-map [menu-bar help-menu] nil)
-;; (define-key global-map [menu-bar file] nil)
+(define-key global-map [menu-bar options] nil)
+(define-key global-map [menu-bar YASnippet] nil) ;; doesn't work
+(define-key global-map [menu-bar edit] nil)
+(define-key global-map [menu-bar buffer] nil)
+(define-key global-map [menu-bar tools] nil)
+(define-key global-map [menu-bar help-menu] nil)
+(define-key global-map [menu-bar file] nil)
+
+
+(define-key emacs-lisp-mode-map [menu-bar file] nil)
+(define-key emacs-lisp-mode-map [menu-bar options] nil)
+(define-key emacs-lisp-mode-map [menu-bar YASnippet] nil) ;; doesn't work
+(define-key emacs-lisp-mode-map [menu-bar edit] nil)
+(define-key emacs-lisp-mode-map [menu-bar buffer] nil)
+(define-key emacs-lisp-mode-map [menu-bar tools] nil)
+(define-key emacs-lisp-mode-map [menu-bar help-menu] nil)
+(define-key emacs-lisp-mode-map [menu-bar file] nil)
+
+
 
 
 (setq debug-on-error t)
@@ -617,15 +645,43 @@ FIXME when i put this on github, put the string in private.el"
 
 ;; july 7 2018. this is enabled. what.
 ;; Also auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers nil
+(setq revert-non-file-buffers nil
       auto-revert-verbose nil)
 
 
 
-(defface default '((t (:inherit nil :stipple nil :background "black" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight extralight :height 120 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default) ;; TODO do i need this?
+(defface default '((t (:inherit nil :stipple nil :background "#000000" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight extralight :height 120 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default) ;; TODO do i need this?
 
+;; either i had changed noctilux's default black, or they changed it over time. regardless, off-black is bad.
+(defvar noctilux-colors           ; ANSI(Noctilux terminal)
+  ;; name     sRGB      Gen RGB   256       16              8
+  '((base03  "#000000" "#000000" "#000000" "brightblack"   "black") ;; this is the one i changed
+    (base02  "#292929" "#292929" "#292929" "black"         "black")
+    (base01  "#5f5f5f" "#5f5f5f" "#5f5f5f" "brightgreen"   "green")
+    (base00  "#999999" "#999999" "#999999" "brightyellow"  "yellow")
+    (base0   "#cccccc" "#cccccc" "#cccccc" "brightblue"    "blue")
+    (base1   "#aaaaaa" "#aaaaaa" "#aaaaaa" "brightcyan"    "cyan")
+    (base2   "#e9e2cb" "#e9e2cb" "#e9e2cb" "white"         "white")
+    (base3   "#fcf4dc" "#fcf4dc" "#fcf4dc" "brightwhite"   "white")
+    (yellow  "#aaeecc" "#aaeecc" "#aaeecc" "yellow"        "yellow")
+    (orange  "#ff8888" "#ff8888" "#ff8888" "brightred"     "red")
+    (red     "#ff3333" "#ff3333" "#ff3333" "red"           "red")
+    (magenta "#FF1F69" "#FF1F69" "#FF1F69" "magenta"       "magenta")
+    (violet  "#ccaaff" "#ccaaff" "#ccaaff" "brightmagenta" "magenta")
+    (blue    "#aaccff" "#aaccff" "#aaccff" "blue"          "blue")
+    (cyan    "#aadddd" "#aadddd" "#aadddd" "cyan"          "cyan")
+    (white   "#ffffff" "#ffffff" "#ffffff" "white"          "white")
+    (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green"))
+  "This is a table of all the colors used by the Noctilux color theme. Each
+   column is a different set, one of which will be chosen based on term
+   capabilities, etc.")
+
+;; (setq exec-path
+;;       (append exec-path '("/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin") )
+;;       )
+
+(setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/openjdk-12.0.1.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
 )
-
 
 
 (defun dotspacemacs/emacs-custom-settings ()
@@ -633,6 +689,7 @@ FIXME when i put this on github, put the string in private.el"
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -640,14 +697,13 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#292929" "#ff3333" "#aaffaa" "#aaeecc" "#aaccff" "#FF1F69" "#aadddd" "#999999"])
- '(background-color "#202020")
+ '(background-color "#000000")
  '(background-mode dark)
  '(buffer-stack-untracked
    (quote
     ("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*")))
- '(cider-pprint-fn (quote pprint))
- '(cider-print-fn (quote fipp))
  '(cider-print-options nil)
+ '(cider-print-quota 1000000000)
  '(cider-repl-history-file "~/emacs-files/cider-history")
  '(cider-repl-print-length 1000000)
  '(cider-repl-prompt-function (quote cider-repl-prompt-abbreviated))
@@ -657,12 +713,12 @@ This function is called at the very end of Spacemacs initialization."
  '(completion-ignored-extensions
    (quote
     (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
- '(csv-separators (quote ("," "	" "	")))
+ '(csv-separators (quote ("," "	" "	" "|")))
  '(cursor-color "#cccccc")
  '(custom-enabled-themes (quote (noctilux)))
  '(custom-safe-themes
    (quote
-    ("4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+    ("8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(debug-on-error nil)
  '(desktop-save t)
  '(desktop-save-mode t)
@@ -677,7 +733,6 @@ This function is called at the very end of Spacemacs initialization."
  '(evil-want-Y-yank-to-eol t)
  '(foreground-color "#cccccc")
  '(fringe-mode nil nil (fringe))
- '(global-auto-revert-mode nil)
  '(global-evil-search-highlight-persist nil)
  '(global-undo-tree-mode t)
  '(helm-ag-use-agignore t)
@@ -790,10 +845,8 @@ This function is called at the very end of Spacemacs initialization."
      nil "")))
  '(package-selected-packages
    (quote
-    (org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
- '(pdf-view-use-imagemagick t)
- '(pdf-view-use-scaling t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
