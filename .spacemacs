@@ -57,6 +57,8 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
+                                      company
+                                      company-tabnine
                                       gnu-apl-mode
                                       shen-mode
                                       org-projectile
@@ -74,6 +76,7 @@ values."
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages t))
+
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -289,7 +292,6 @@ layers configuration. You are free to put any user code."
 
   (add-hook 'eww-mode-hook (lambda ()
                              (setq buffer-read-only nil)))
-  (add-hook 'org-mode-hook 'toggle-word-wrap)
   (add-hook 'clojure-mode-hook (lambda ()
                                  (paredit-mode t)
                                  (rainbow-delimiters-mode-disable)))
@@ -297,7 +299,6 @@ layers configuration. You are free to put any user code."
                               (paredit-mode t)
                               (rainbow-delimiters-mode-disable)))
   (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)))
-  (add-hook 'org-mode-hook (lambda () (toggle-word-wrap t)))
   ;; this may work
   (setq-default word-wrap t)
 
@@ -393,6 +394,9 @@ layers configuration. You are free to put any user code."
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 
 (define-key evil-normal-state-map (kbd ", t e") 'm/eval-sexp-and-clojure-test)
+
+;; do not confirm killing process buffers. just kill them.
+(setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
 
 
 (fset 'refile-to-time-spent
@@ -680,7 +684,8 @@ FIXME when i put this on github, put the string in private.el"
 ;;       (append exec-path '("/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin") )
 ;;       )
 
-(setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/openjdk-12.0.1.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
+;; (setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/openjdk-12.0.1.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
+(setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
 )
 
 
@@ -689,7 +694,6 @@ FIXME when i put this on github, put the string in private.el"
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -705,10 +709,15 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-print-options nil)
  '(cider-print-quota 1000000000)
  '(cider-repl-history-file "~/emacs-files/cider-history")
+ '(cider-repl-history-show-preview nil)
+ '(cider-repl-history-size 50000)
  '(cider-repl-print-length 1000000)
  '(cider-repl-prompt-function (quote cider-repl-prompt-abbreviated))
+ '(cider-repl-use-clojure-font-lock nil)
+ '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
+ '(company-tabnine-wait 0.0)
  '(compilation-message-face (quote default))
  '(completion-ignored-extensions
    (quote
@@ -728,6 +737,7 @@ This function is called at the very end of Spacemacs initialization."
  '(dired-use-ls-dired (quote unspecified))
  '(dirtrack-list (quote ("|mfm|  \\([^|]*\\)" 1)))
  '(evil-default-cursor (quote (hbar)))
+ '(evil-ex-search-highlight-all t)
  '(evil-move-beyond-eol t)
  '(evil-move-cursor-back nil)
  '(evil-want-Y-yank-to-eol t)
@@ -736,10 +746,14 @@ This function is called at the very end of Spacemacs initialization."
  '(global-evil-search-highlight-persist nil)
  '(global-undo-tree-mode t)
  '(helm-ag-use-agignore t)
+ '(helm-grep-ignored-directories
+   (quote
+    ("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/")))
  '(inferior-lisp-program "sbcl" t)
  '(isearch-allow-scroll t)
  '(j-console-cmd "/Applications/j64-804/bin/jconsole")
  '(js2-strict-missing-semi-warning nil)
+ '(kill-ring-max 6000)
  '(nrepl-log-messages t)
  '(nrepl-sync-request-timeout 30)
  '(ns-antialias-text t)
@@ -845,7 +859,7 @@ This function is called at the very end of Spacemacs initialization."
      nil "")))
  '(package-selected-packages
    (quote
-    (import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
@@ -874,7 +888,6 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#000000" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
  '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
  '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
  '(font-lock-comment-face ((t (:foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
