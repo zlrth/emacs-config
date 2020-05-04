@@ -112,6 +112,7 @@ values."
    dotspacemacs-themes '(;; monokai
                          noctilux
                          )
+   desktop-dirname "/Users/matt/"
 
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -704,39 +705,39 @@ This function is called at the very end of Spacemacs initialization."
  '(background-color "#000000")
  '(background-mode dark)
  '(buffer-stack-untracked
-   (quote
-    ("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*")))
+   '("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*"))
+ '(cider-lein-command "lein")
+ '(cider-lein-global-options "with-profile +matt")
  '(cider-print-options nil)
  '(cider-print-quota 1000000000)
  '(cider-repl-history-file "~/emacs-files/cider-history")
  '(cider-repl-history-show-preview nil)
  '(cider-repl-history-size 50000)
  '(cider-repl-print-length 1000000)
- '(cider-repl-prompt-function (quote cider-repl-prompt-abbreviated))
+ '(cider-repl-prompt-function 'cider-repl-prompt-abbreviated)
+ '(cider-repl-require-ns-on-set t)
  '(cider-repl-use-clojure-font-lock nil)
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
  '(company-tabnine-wait 0.0)
- '(compilation-message-face (quote default))
+ '(compilation-message-face 'default)
  '(completion-ignored-extensions
-   (quote
-    (".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo")))
- '(csv-separators (quote ("," "	" "	" "|")))
+   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
+ '(csv-separators '("," "	"))
  '(cursor-color "#cccccc")
- '(custom-enabled-themes (quote (noctilux)))
+ '(custom-enabled-themes '(noctilux))
  '(custom-safe-themes
-   (quote
-    ("8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+   '("8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
  '(debug-on-error nil)
  '(desktop-save t)
  '(desktop-save-mode t)
  '(dired-listing-switches
    "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
- '(dired-recursive-deletes (quote always))
- '(dired-use-ls-dired (quote unspecified))
- '(dirtrack-list (quote ("|mfm|  \\([^|]*\\)" 1)))
- '(evil-default-cursor (quote (hbar)))
+ '(dired-recursive-deletes 'always)
+ '(dired-use-ls-dired 'unspecified)
+ '(dirtrack-list '("|mfm|  \\([^|]*\\)" 1))
+ '(evil-default-cursor '(hbar))
  '(evil-ex-search-highlight-all t)
  '(evil-move-beyond-eol t)
  '(evil-move-cursor-back nil)
@@ -744,36 +745,35 @@ This function is called at the very end of Spacemacs initialization."
  '(foreground-color "#cccccc")
  '(fringe-mode nil nil (fringe))
  '(global-evil-search-highlight-persist nil)
+ '(global-so-long-mode t)
  '(global-undo-tree-mode t)
  '(helm-ag-use-agignore t)
  '(helm-grep-ignored-directories
-   (quote
-    ("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/")))
+   '("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/"))
  '(inferior-lisp-program "sbcl" t)
  '(isearch-allow-scroll t)
  '(j-console-cmd "/Applications/j64-804/bin/jconsole")
+ '(js-indent-level 2)
  '(js2-strict-missing-semi-warning nil)
  '(kill-ring-max 6000)
+ '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 14))
  '(nrepl-log-messages t)
  '(nrepl-sync-request-timeout 30)
+ '(nrepl-use-ssh-fallback-for-remote-hosts t)
  '(ns-antialias-text t)
  '(org-agenda-custom-commands
-   (quote
-    (("n" "Agenda and all TODOs"
+   '(("n" "Agenda and all TODOs"
       ((agenda "" nil)
        (alltodo "" nil))
       nil)
      ("x" agenda "doesn't have data like :food:interruptions:reading:"
       ((org-agenda-ndays 7)
        (org-agenda-filter-preset
-        (quote
-         ("-reading" "-food" "-interrupt"))))))))
+        '("-reading" "-food" "-interrupt"))))))
  '(org-agenda-files
-   (quote
-    ("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org")))
+   '("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org"))
  '(org-capture-templates
-   (quote
-    (("e" "emacs annoyances TEST" entry
+   '(("e" "emacs annoyances TEST" entry
       (file+headline "~/org/home.org" "emacs annoyances")
       "**  %?
 %U
@@ -834,55 +834,48 @@ This function is called at the very end of Spacemacs initialization."
       "** %?
 %a
 %U
-%i" :clock-in t :clock-resume t))))
- '(org-clock-mode-line-total (quote current))
+%i" :clock-in t :clock-resume t)))
+ '(org-clock-mode-line-total 'current)
  '(org-confirm-babel-evaluate nil)
  '(org-habit-graph-column 80)
  '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
+   '(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m))
  '(org-refile-targets
-   (quote
-    ((org-agenda-files :regexp . "time spent")
+   '((org-agenda-files :regexp . "time spent")
      (org-agenda-files :regexp . "someday to read")
      (org-agenda-files :regexp . "catapult")
      (org-agenda-files :regexp . "UR")
      (org-agenda-files :regexp . "paypal")
      (org-agenda-files :regexp . "jokes")
-     (org-agenda-files :regexp . "ephemeral"))))
- '(org-src-block-faces (quote (("clojure" default))))
+     (org-agenda-files :regexp . "ephemeral")))
+ '(org-src-block-faces '(("clojure" default)))
  '(org-startup-truncated nil)
  '(org-stuck-projects
-   (quote
-    ("LEVEL>1/TODO"
+   '("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
-     nil "")))
+     nil ""))
  '(package-selected-packages
-   (quote
-    (company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-tern company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+   '(lsp-ui lsp-treemacs lsp-python-ms helm-lsp flycheck-pos-tip pos-tip dap-mode bui tree-mode company-lsp lsp-mode ansi shut-up git commander company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
  '(projectile-globally-ignored-directories
-   (quote
-    ("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes")))
- '(projectile-globally-ignored-file-suffixes (quote (".class" "class")))
- '(projectile-globally-ignored-files
-   (quote
-    ("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#")))
- '(projectile-indexing-method (quote native))
+   '("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes"))
+ '(projectile-globally-ignored-file-suffixes '(".class" "class"))
+ '(projectile-globally-ignored-files '("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#"))
+ '(projectile-indexing-method 'native)
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
-   (quote
-    ((cider-ns-refresh-after-fn . "integrant.repl/resume")
+   '((cider-ns-refresh-after-fn . "integrant.repl/resume")
      (cider-ns-refresh-before-fn . "integrant.repl/suspend")
      (javascript-backend . tern)
-     (javascript-backend . lsp))))
- '(same-window-buffer-names (quote ("*inferior-shen*" "*cider-error*")))
- '(shr-external-browser (quote eww-browse-url))
+     (javascript-backend . lsp)))
+ '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
+ '(shr-external-browser 'eww-browse-url)
  '(tramp-default-method "ssh" nil (tramp))
  '(trash-directory "~/.Trash")
- '(vc-follow-symlinks t))
+ '(vc-follow-symlinks t)
+ '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
