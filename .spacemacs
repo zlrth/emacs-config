@@ -21,7 +21,7 @@ values."
      ansible
      idris
      ;; ansible
-
+     xclipboard ; needed for terminal emacs. uses pbcopy and pbpaste
      graphviz
      floobits
      sql
@@ -77,7 +77,6 @@ values."
    ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages t))
 
-
 (defun dotspacemacs/init ()
   "Initialization function.
 
@@ -115,7 +114,7 @@ values."
    desktop-dirname "/Users/matt/"
 
    ;; If non nil the cursor color matches the state color.
-   dotspacemacs-colorize-cursor-according-to-state t
+   dotspacemacs-colorize-cursor-according-to-state nil ; changed because it's now slow?
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Monaco"
@@ -264,7 +263,6 @@ layers configuration. You are free to put any user code."
 
   (require 'ob-clojure)
   (require 'cider)
-  (require 'ob-clojure-literate)
   (require 'helm-bookmark)
   (require 'org-projectile)
 
@@ -426,90 +424,6 @@ layers configuration. You are free to put any user code."
   (cider-test-run-test))
 
 
-(defun m/cider-jack-in-clj (params)
-  "Start an nREPL server for the current project and connect to it.
-PARAMS is a plist optionally containing :project-dir and :jack-in-cmd.
-With the prefix argument, allow editing of the jack in command; with a
-double prefix prompt for all these parameters."
-  (interactive "P")
-  (message "before thrush, params are")
-  (message "%s" params)
-  (let ((params (thread-first params
-                  (cider--update-project-dir)
-                  (cider--check-existing-session)
-                  (cider--update-jack-in-cmd))))
-    (message "after thrush, params are")
-    (message "%s" params)
-    (nrepl-start-server-process
-     (plist-get params :project-dir)
-     (plist-get params :jack-in-cmd)
-     (lambda (server-buffer)
-       (cider-connect-sibling-clj params server-buffer)
-       ; (switch-to-buffer server-buffer)
-       ))))
-
-
-
-(defun cider-jack-in-with-start-figwheel (&optional prompt-project cljs-too)
-  "Start an nREPL server for the current project and connect to it.
-If PROMPT-PROJECT is t, then prompt for the project for which to
-start the server.
-If CLJS-TOO is non-nil, also start a ClojureScript REPL session with its
-own buffer."
-  (interactive "P")
-  (setq cider-current-clojure-buffer (current-buffer))
-  (let* ((project-type (cider-project-type))
-         (command (cider-jack-in-command project-type))
-         (command-resolved (cider-jack-in-resolve-command project-type))
-         (command-global-opts (cider-jack-in-global-options project-type))
-         (command-params (cider-jack-in-params project-type)))
-    (if command-resolved
-        (let* ((project (when prompt-project
-                          (read-directory-name "Project: ")))
-               (project-dir (clojure-project-dir
-                             (or project (cider-current-dir))))
-               (params (if prompt-project
-                           (read-string (format "nREPL server command: %s "
-                                                command-params)
-                                        command-params)
-                         command-params))
-               (params (if cider-inject-dependencies-at-jack-in
-                           (cider-inject-jack-in-dependencies command-global-opts params project-type)
-                         params))
-
-               (cmd (format "%s %s" command-resolved params)))
-          (if (or project-dir cider-allow-jack-in-without-project)
-              (progn
-                (when (or project-dir
-                          (eq cider-allow-jack-in-without-project t)
-                          (and (null project-dir)
-                               (eq cider-allow-jack-in-without-project 'warn)
-                               (y-or-n-p "Are you sure you want to run `cider-jack-in' without a Clojure project? ")))
-                  (when-let ((repl-buff (cider--choose-reusable-repl-buffer nil)))
-                    (let ((nrepl-create-client-buffer-function  #'cider-repl-create)
-                          (nrepl-use-this-as-repl-buffer repl-buff))
-                      (nrepl-start-server-process
-                       project-dir cmd
-                       (lambda (client-buffer)
-                         (switch-to-buffer client-buffer)
-                         (sleep-for 1)
-                         (insert "(do (require '[collage.handler])
-                                      (collage.handler/stop!)
-                                   (collage.handler/-main)
-                                   (start)
-                                   (cljs))")
-
-                         (cider-repl-return)))))))
-            (user-error "`cider-jack-in' is not allowed without a Clojure project")))
-      (user-error "The %s executable isn't on your `exec-path'" command))))
-
-(defun start-cider-project ()
-  (interactive)
-  (cider-jack-in-with-start-figwheel)
-  (projectile-with-default-dir (projectile-project-root)
-    (async-shell-command "react-native run-ios > /dev/null" nil nil))) ;; want stdout and stderr for debugging? s!/> /dev/null!!
-
-
 (defun m/copy-apollo-tracker-to-clipboard ()
   "so i don't have to keep finding this string in my org project.
 FIXME when i put this on github, put the string in private.el"
@@ -658,7 +572,8 @@ FIXME when i put this on github, put the string in private.el"
 (defface default '((t (:inherit nil :stipple nil :background "#000000" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight extralight :height 120 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default) ;; TODO do i need this?
 
 ;; either i had changed noctilux's default black, or they changed it over time. regardless, off-black is bad.
-(defvar noctilux-colors           ; ANSI(Noctilux terminal)
+;; 2020-05-05-- probably didn't work because i was using defvar, not setq. defvar doesn't override already defined variables.
+(setq noctilux-colors           ; ANSI(Noctilux terminal)
   ;; name     sRGB      Gen RGB   256       16              8
   '((base03  "#000000" "#000000" "#000000" "brightblack"   "black") ;; this is the one i changed
     (base02  "#292929" "#292929" "#292929" "black"         "black")
@@ -676,10 +591,7 @@ FIXME when i put this on github, put the string in private.el"
     (blue    "#aaccff" "#aaccff" "#aaccff" "blue"          "blue")
     (cyan    "#aadddd" "#aadddd" "#aadddd" "cyan"          "cyan")
     (white   "#ffffff" "#ffffff" "#ffffff" "white"          "white")
-    (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green"))
-  "This is a table of all the colors used by the Noctilux color theme. Each
-   column is a different set, one of which will be chosen based on term
-   capabilities, etc.")
+    (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green")))
 
 ;; (setq exec-path
 ;;       (append exec-path '("/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin") )
@@ -839,7 +751,7 @@ This function is called at the very end of Spacemacs initialization."
  '(org-confirm-babel-evaluate nil)
  '(org-habit-graph-column 80)
  '(org-modules
-   '(org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m))
+   '(org-docview org-habit))
  '(org-refile-targets
    '((org-agenda-files :regexp . "time spent")
      (org-agenda-files :regexp . "someday to read")
@@ -855,7 +767,7 @@ This function is called at the very end of Spacemacs initialization."
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil ""))
  '(package-selected-packages
-   '(lsp-ui lsp-treemacs lsp-python-ms helm-lsp flycheck-pos-tip pos-tip dap-mode bui tree-mode company-lsp lsp-mode ansi shut-up git commander company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu erc-yt erc-view-log erc-terminal-notifier erc-social-graph erc-image erc-hl-nicks emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))
+   '(lsp-ui lsp-treemacs lsp-python-ms helm-lsp flycheck-pos-tip pos-tip dap-mode bui tree-mode company-lsp lsp-mode ansi shut-up git commander company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
