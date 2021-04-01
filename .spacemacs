@@ -1,7 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -17,13 +16,12 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(typescript
+   '(csv
+     typescript
      ansible
      idris
      ;; ansible
      xclipboard ; needed for terminal emacs. uses pbcopy and pbpaste
-     graphviz
-     floobits
      sql
      react
      python
@@ -31,17 +29,17 @@ values."
      latex
      ;; pdf
      markdown
-     csv
+     ; csv ;; for emacs 28!
      html
      clojure ;; :variables clojure-enable-fancify-symbols t ;; put in a () if you want this. dunno if it's buggy
-     common-lisp
+     ; common-lisp emacs 28! cl is deprecated!
+
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      (auto-completion :disabled-for spacemacs-org org)
-     erc
      spacemacs-layouts
      chrome
      emacs-lisp
@@ -51,6 +49,7 @@ values."
      org
      version-control
      git
+     ; osx for emacs 28!
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -59,10 +58,10 @@ values."
    dotspacemacs-additional-packages '(
                                       company
                                       company-tabnine
-                                      gnu-apl-mode
+                                      ; gnu-apl-mode ; emacs 28! cl is deprecated!
                                       shen-mode
-                                      org-projectile
-                                      org-projectile-helm
+                                      ; org-projectile  ; emacs 28! cl is deprecated!
+                                      ; org-projectile-helm  ; emacs 28! cl is deprecated!
                                       org-beautify-theme
                                       (j-mode    :location (recipe :fetcher github :repo "zlrth/j-mode"))
                                       (shen-mode :location (recipe :fetcher gitlab :repo "zlrth/shen-mode")))
@@ -84,6 +83,8 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
+  (setq byte-compile-warnings '(cl-functions)) ; trying cl is deprecated what the fuck i hate it
+
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
@@ -111,7 +112,7 @@ values."
    dotspacemacs-themes '(;; monokai
                          noctilux
                          )
-   desktop-dirname "/Users/matt/"
+   desktop-dirname "/Users/matt/emacs.d/cache/"
 
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state nil ; changed because it's now slow?
@@ -123,6 +124,7 @@ values."
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader ke
+
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
@@ -197,7 +199,7 @@ values."
    ;; point when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
    ;; tests broke so i added this. other options are 'spacemacs, custom, vim-powerline, vanilla
-   dotspacemacs-mode-line-theme 'spacemacs
+   dotspacemacs-mode-line-theme 'vanilla
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -239,16 +241,10 @@ user code."
       (kbd ", h") 'j-help-lookup-symbol-at-point
       (kbd ", H") 'j-help-lookup-symbol))
 
-  ;; crackin skulls. doesn't work. but 'toggle-menu-bar-mode-from-frame might
-  (with-eval-after-load 'clojure-mode
-    (define-key clojure-mode-map [menu-bar options] nil)
-    (define-key clojure-mode-map [menu-bar YASnippet] nil) ;; doesn't work
-    (define-key clojure-mode-map [menu-bar edit] nil)
-    (define-key clojure-mode-map [menu-bar buffer] nil)
-    (define-key clojure-mode-map [menu-bar tools] nil)
-    (define-key clojure-mode-map [menu-bar help-menu] nil)
-    (define-key clojure-mode-map [menu-bar file] nil))
+  ; (setq debug-on-error t) ; don't know emacs 28!
+
   )
+
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -259,25 +255,22 @@ layers configuration. You are free to put any user code."
     (when gls
       (setq insert-directory-program gls)))
 
+  (setq frame-title-format nil) ; display nothing in the _frame_ title bar. emacs is faster when it doesn't have to calculate anything here.
   ;; (require 'pdf-tools)
 
-  (require 'ob-clojure)
-  (require 'cider)
-  (require 'helm-bookmark)
-  (require 'org-projectile)
+  ; (require 'ob-clojure) ; trying removing cl is deprecated!
+  ; (require 'cider) ; 2020-11-30 is this breaking org-capture? apparently it is.
+  (require 'helm-bookmark) ; 2021-03-31 is this breaking org-capture? apparentlyi it is NOT?
+  ; (setq debug-on-error t)
+  ; (require 'org-projectile) ; trying removing cl is deprecated!
 
   ;; this is bugging out
   ;; (evil-set-initial-state 'org-agenda-mode 'emacs)
 
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((clojure . t)))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((clojure . t)))
-
-  (with-eval-after-load 'clojure-mode
-    (evil-define-key 'normal clojure-mode-map (kbd ", b") 'start-cider-project))
   (with-eval-after-load 'evil-org
     (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below))
 
@@ -287,17 +280,18 @@ layers configuration. You are free to put any user code."
   ;; berry-choose-window-for-popups was a popup thing i thought about once
 
   (setq system-uses-terminfo nil)
-  (spacemacs/toggle-mode-line-org-clock-on)
+  ; (spacemacs/toggle-mode-line-org-clock-on) ; error
 
   (add-hook 'eww-mode-hook (lambda ()
                              (setq buffer-read-only nil)))
-  (add-hook 'clojure-mode-hook (lambda ()
-                                 (paredit-mode t)
-                                 (rainbow-delimiters-mode-disable)))
+  ;; (add-hook 'clojure-mode-hook (lambda ()
+  ;;                                (paredit-mode t)
+  ;;                                (rainbow-delimiters-mode-disable))) ;; emacs 28!
   (add-hook 'lisp-mode-hook (lambda ()
                               (paredit-mode t)
                               (rainbow-delimiters-mode-disable)))
-  (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)))
+  (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)
+                                    (define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)))
   ;; this may work
   (setq-default word-wrap t)
 
@@ -331,7 +325,7 @@ layers configuration. You are free to put any user code."
 (define-key evil-normal-state-map (kbd "C-x C-k")  'kill-this-buffer)
 (define-key evil-normal-state-map (kbd "C-x k")  'kill-this-buffer)
 
-(define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)
+
 
 (defun m/open-terminal ()
   (interactive)
@@ -409,31 +403,11 @@ layers configuration. You are free to put any user code."
 (fset 'search-matts-org-project
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([32 112 112 111 114 103 return 13 32 115 97 112] 0 "%d")) arg)))
 
-(defun search-matts-org-project ()
-  (interactive)
-  (switch-to-buffer "work.org")
-  (spacemacs/helm-project-do-ag) ;; so how would i do, "if you C-g, go back to the previous buffer" TODO ask emacs subreddit
-  )
-
-
-(defun spacemacs/cider-test-run-focused-test ()
-  "Run test around point."
-  (interactive)
-  (save-buffer)
-  (cider-load-buffer)
-  (cider-test-run-test))
-
-
 (defun m/copy-apollo-tracker-to-clipboard ()
   "so i don't have to keep finding this string in my org project.
 FIXME when i put this on github, put the string in private.el"
   (interactive)
   (ns-store-selection-internal 'CLIPBOARD "http://apollo.rip:2095/d986b2c39a9d02a31eefbb4c989835aa/announce"))
-
-(defun m/eval-sexp-and-clojure-test ()
-  (interactive)
-  (cider-eval-last-sexp)
-  (cider-test-run-test))
 
 (defun m/org-goto-selection ()
   (interactive)
@@ -443,10 +417,6 @@ FIXME when i put this on github, put the string in private.el"
 (defun m/edit-dot-spacemacs ()
   (interactive)
   (find-file "~/.spacemacs"))
-
-(defun m/edit-schedule ()
-  (interactive)
-  (find-file "~/org/schedule.org"))
 
 (defun m/insert-interruption ()
   (interactive)
@@ -468,98 +438,36 @@ FIXME when i put this on github, put the string in private.el"
 (setq helm-semantic-fuzzy-match t)
 (setq helm-imenu-fuzzy-match t)
 
+; global-map uses undo-tree, require it first. doesn't work: https://www.reddit.com/r/emacs/comments/bwleyk/set_debugonerror_to_t_then_startup_with_undotree/
 
-;; these are bugging out?
-(define-key global-map [menu-bar options] nil)
-(define-key global-map [menu-bar YASnippet] nil) ;; doesn't work
-(define-key global-map [menu-bar edit] nil)
-(define-key global-map [menu-bar buffer] nil)
-(define-key global-map [menu-bar tools] nil)
-(define-key global-map [menu-bar help-menu] nil)
-(define-key global-map [menu-bar file] nil)
+(require 'undo-tree)
+(remove-hook 'menu-bar-update-hook 'undo-tree-update-menu-bar) ; from the reddit post. some (perspectives) still don't work.
+(define-key persp-mode-map      [menu-bar] nil)
+(define-key undo-tree-map [menu-bar] nil)
+(define-key global-map [menu-bar] nil)
 
 
-(define-key emacs-lisp-mode-map [menu-bar file] nil)
-(define-key emacs-lisp-mode-map [menu-bar options] nil)
-(define-key emacs-lisp-mode-map [menu-bar YASnippet] nil) ;; doesn't work
-(define-key emacs-lisp-mode-map [menu-bar edit] nil)
-(define-key emacs-lisp-mode-map [menu-bar buffer] nil)
-(define-key emacs-lisp-mode-map [menu-bar tools] nil)
-(define-key emacs-lisp-mode-map [menu-bar help-menu] nil)
-(define-key emacs-lisp-mode-map [menu-bar file] nil)
+(define-key emacs-lisp-mode-map [menu-bar] nil)
+(define-key projectile-mode-map [menu-bar] nil)
+(define-key yas-minor-mode-map  [menu-bar] nil)
+(define-key cider-mode-map      [menu-bar] nil)
+; (byte-recompile-directory "~/.emacs.d/" nil 'force)
+(define-key sesman-map [menu-bar] nil)
 
-
-
-
-(setq debug-on-error t)
 (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
 
 (setq inferior-shen-program " /Users/matt/hacking/shen/shen-json/shen") ;; TODO could i put all of these setq's up in setq-default?
 
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 
-(setq eww-mode-map ;; redefining eww-mode-map with (set-keymap-parent) so i can insert chars in eww
-      (let ((map (make-sparse-keymap)))
-        (set-keymap-parent map global-map) ;; here we inherit self-insert-commands
-        ;; normal-mode works, and inserting some characters works, but
-        ;; in insert-mode, "g" (eww-reloads). i want: in normal mode, g eww reloads
-    (define-key map "g" 'eww-reload) ;FIXME: revert-buffer-function instead!
-    (define-key map "G" 'eww)
-    (define-key map "T" 'test-completion)
-    (define-key map [?\t] 'shr-next-link)
-    (define-key map [?\M-\t] 'shr-previous-link)
-    (define-key map [backtab] 'shr-previous-link)
-    (define-key map [delete] 'scroll-down-command)
-    (define-key map "l" 'eww-back-url)
-    (define-key map "r" 'eww-forward-url)
-    (define-key map "n" 'eww-next-url)
-    (define-key map "p" 'eww-previous-url)
-    (define-key map "u" 'eww-up-url)
-    (define-key map "t" 'eww-top-url)
-    (define-key map "&" 'eww-browse-with-external-browser)
-    (define-key map "d" 'eww-download)
-    (define-key map "w" 'eww-copy-page-url)
-    (define-key map "C" 'url-cookie-list)
-    (define-key map "v" 'eww-view-source)
-    (define-key map "R" 'eww-readable)
-    (define-key map "H" 'eww-list-histories)
-    (define-key map "E" 'eww-set-character-encoding)
-    (define-key map "S" 'eww-list-buffers)
-    (define-key map "F" 'eww-toggle-fonts)
-    (define-key map "D" 'eww-toggle-paragraph-direction)
-
-    (define-key map "b" 'eww-add-bookmark)
-    (define-key map "B" 'eww-list-bookmarks)
-    (define-key map [(meta n)] 'eww-next-bookmark)
-    (define-key map [(meta p)] 'eww-previous-bookmark)
-
-
-    (easy-menu-define nil map ""
-      '("Eww"
-	["Exit" quit-window t]
-	["Close browser" quit-window t]
-	["Reload" eww-reload t]
-	["Back to previous page" eww-back-url
-	 :active (not (zerop (length eww-history)))]
-	["Forward to next page" eww-forward-url
-	 :active (not (zerop eww-history-position))]
-	["Browse with external browser" eww-browse-with-external-browser t]
-	["Download" eww-download t]
-	["View page source" eww-view-source]
-	["Copy page URL" eww-copy-page-url t]
-	["List histories" eww-list-histories t]
-	["List buffers" eww-list-buffers t]
-	["Add bookmark" eww-add-bookmark t]
-	["List bookmarks" eww-list-bookmarks t]
-	["List cookies" url-cookie-list t]
-        ["Character Encoding" eww-set-character-encoding]
-        ["Toggle Paragraph Direction" eww-toggle-paragraph-direction]))
-    map))
-
-
+; (frame-monitor-attributes) ; should have metal
 ;; this is set in layers/+distributions/spacemacs-base/config.el. in dired, it moves the cursor around after renaming a file, which is driving me crazy. disabled.
 ;; Auto refresh
 (global-auto-revert-mode t)
+
+; (setq icon-title-format nil)
+; (setq frame-title-format nil)
+
 ;; i set this to nil but now i want it to be `t'. isn't life funny.
 
 ;; july 7 2018. this is enabled. what.
@@ -567,46 +475,38 @@ FIXME when i put this on github, put the string in private.el"
 (setq revert-non-file-buffers nil
       auto-revert-verbose nil)
 
-
-
-(defface default '((t (:inherit nil :stipple nil :background "#000000" :foreground "#F8F8F2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight extralight :height 120 :width normal :foundry "unknown" :family "Operator Mono"))) "default face" :group 'default) ;; TODO do i need this?
+(fmakunbound 'blackbox) ; clobbers my muscle memory for (git) blame
+(fmakunbound 'blackbox-mode)
+(fmakunbound 'blacken-mode)
 
 ;; either i had changed noctilux's default black, or they changed it over time. regardless, off-black is bad.
 ;; 2020-05-05-- probably didn't work because i was using defvar, not setq. defvar doesn't override already defined variables.
-(setq noctilux-colors           ; ANSI(Noctilux terminal)
-  ;; name     sRGB      Gen RGB   256       16              8
-  '((base03  "#000000" "#000000" "#000000" "brightblack"   "black") ;; this is the one i changed
-    (base02  "#292929" "#292929" "#292929" "black"         "black")
-    (base01  "#5f5f5f" "#5f5f5f" "#5f5f5f" "brightgreen"   "green")
-    (base00  "#999999" "#999999" "#999999" "brightyellow"  "yellow")
-    (base0   "#cccccc" "#cccccc" "#cccccc" "brightblue"    "blue")
-    (base1   "#aaaaaa" "#aaaaaa" "#aaaaaa" "brightcyan"    "cyan")
-    (base2   "#e9e2cb" "#e9e2cb" "#e9e2cb" "white"         "white")
-    (base3   "#fcf4dc" "#fcf4dc" "#fcf4dc" "brightwhite"   "white")
-    (yellow  "#aaeecc" "#aaeecc" "#aaeecc" "yellow"        "yellow")
-    (orange  "#ff8888" "#ff8888" "#ff8888" "brightred"     "red")
-    (red     "#ff3333" "#ff3333" "#ff3333" "red"           "red")
-    (magenta "#FF1F69" "#FF1F69" "#FF1F69" "magenta"       "magenta")
-    (violet  "#ccaaff" "#ccaaff" "#ccaaff" "brightmagenta" "magenta")
-    (blue    "#aaccff" "#aaccff" "#aaccff" "blue"          "blue")
-    (cyan    "#aadddd" "#aadddd" "#aadddd" "cyan"          "cyan")
-    (white   "#ffffff" "#ffffff" "#ffffff" "white"          "white")
-    (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green")))
+'(defvar noctilux-colors           ; ANSI(Noctilux terminal)
+               ;; name     sRGB      Gen RGB   256       16              8
+               '((base03  "#000000" "#000000" "#000000" "black"   "black") ;; this is the one i changed
+                 (base02  "#292929" "#292929" "#292929" "black"         "black")
+                 (base01  "#5f5f5f" "#5f5f5f" "#5f5f5f" "brightgreen"   "green")
+                 (base00  "#999999" "#999999" "#999999" "brightyellow"  "yellow")
+                 (base0   "#cccccc" "#cccccc" "#cccccc" "brightblue"    "blue")
+                 (base1   "#aaaaaa" "#aaaaaa" "#aaaaaa" "brightcyan"    "cyan")
+                 (base2   "#e9e2cb" "#e9e2cb" "#e9e2cb" "white"         "white")
+                 (base3   "#fcf4dc" "#fcf4dc" "#fcf4dc" "brightwhite"   "white")
+                 (yellow  "#aaeecc" "#aaeecc" "#aaeecc" "yellow"        "yellow")
+                 (orange  "#ff8888" "#ff8888" "#ff8888" "brightred"     "red")
+                 (red     "#ff3333" "#ff3333" "#ff3333" "red"           "red")
+                 (magenta "#FF1F69" "#FF1F69" "#FF1F69" "magenta"       "magenta")
+                 (violet  "#ccaaff" "#ccaaff" "#ccaaff" "brightmagenta" "magenta")
+                 (blue    "#aaccff" "#aaccff" "#aaccff" "blue"          "blue")
+                 (cyan    "#aadddd" "#aadddd" "#aadddd" "cyan"          "cyan")
+                 (white   "#ffffff" "#ffffff" "#ffffff" "white"          "white")
+                 (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green")))
 
-;; (setq exec-path
-;;       (append exec-path '("/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin") )
-;;       )
-
-;; (setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/openjdk-12.0.1.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
 (setenv "PATH" (concat (getenv "PATH") ":/Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/bin:")) ;; second attempt as flies to wanton boys are we to th' gods
+; (load-theme 'noctilux t) ; needed because now noctilux-colors is fucking loaded after the initial load of the theme. need the second arg because emacs doesn't fucking treat the fucking theme as safe. ; emacs 28 this doesn't fucking work. fucking god damnit.
+(desktop-read) ; don't know why emacs doesn't load the desktop on startup
 )
 
 
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -614,21 +514,23 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#292929" "#ff3333" "#aaffaa" "#aaeecc" "#aaccff" "#FF1F69" "#aadddd" "#999999"])
- '(background-color "#000000")
+ '(background-color "#202020")
  '(background-mode dark)
+ '(browse-url-secondary-browser-function 'eww-browse-url)
  '(buffer-stack-untracked
    '("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*"))
  '(cider-lein-command "lein")
  '(cider-lein-global-options "with-profile +matt")
+ '(cider-print-fn 'fipp)
  '(cider-print-options nil)
  '(cider-print-quota 1000000000)
  '(cider-repl-history-file "~/emacs-files/cider-history")
  '(cider-repl-history-show-preview nil)
- '(cider-repl-history-size 50000)
+ '(cider-repl-history-size 500000)
  '(cider-repl-print-length 1000000)
  '(cider-repl-prompt-function 'cider-repl-prompt-abbreviated)
  '(cider-repl-require-ns-on-set t)
- '(cider-repl-use-clojure-font-lock nil)
+ '(cider-repl-use-clojure-font-lock nil t)
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
@@ -640,8 +542,7 @@ This function is called at the very end of Spacemacs initialization."
  '(cursor-color "#cccccc")
  '(custom-enabled-themes '(noctilux))
  '(custom-safe-themes
-   '("8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
- '(debug-on-error nil)
+   '("755e5aa14fa530fdadb7d1082c4b3fddbf52b84f02cd414497b7324c85331dd7" "a6fc75241bcc7ce6f68dcfd0de2d4c4bd804d0f8cd3a9f08c3a07654160e9abe" "b4c86bae65473e89293653058dabdb2a9895b2d08b5df49479017a91bc8240a0" "a7c40bb695b82331b68aa40750ee81ef6f8924f591cd78ea3260314b8bfdf6c2" "4639288d273cbd3dc880992e6032f9c817f17c4a91f00f3872009a099f5b3f84" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(dired-listing-switches
@@ -669,6 +570,7 @@ This function is called at the very end of Spacemacs initialization."
  '(js2-strict-missing-semi-warning nil)
  '(kill-ring-max 6000)
  '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 14))
+ '(magit-save-repository-buffers 'dontask)
  '(nrepl-log-messages t)
  '(nrepl-sync-request-timeout 30)
  '(nrepl-use-ssh-fallback-for-remote-hosts t)
@@ -683,7 +585,7 @@ This function is called at the very end of Spacemacs initialization."
        (org-agenda-filter-preset
         '("-reading" "-food" "-interrupt"))))))
  '(org-agenda-files
-   '("~/org/home.org" "~/org/work.org" "~/org/schedule.org" "~/org/refile.org"))
+   '("~/org/agenda.org"))
  '(org-capture-templates
    '(("e" "emacs annoyances TEST" entry
       (file+headline "~/org/home.org" "emacs annoyances")
@@ -733,7 +635,7 @@ This function is called at the very end of Spacemacs initialization."
 %U
 %i" :clock-in t :clock-resume t)
      ("w" "work note" entry
-      (file+headline "~/org/work.org" "spendgap refile")
+      (file+headline "~/org/newwork.org" "work refile")
       "**  %?
 %a
 %U
@@ -750,8 +652,6 @@ This function is called at the very end of Spacemacs initialization."
  '(org-clock-mode-line-total 'current)
  '(org-confirm-babel-evaluate nil)
  '(org-habit-graph-column 80)
- '(org-modules
-   '(org-docview org-habit))
  '(org-refile-targets
    '((org-agenda-files :regexp . "time spent")
      (org-agenda-files :regexp . "someday to read")
@@ -766,8 +666,7 @@ This function is called at the very end of Spacemacs initialization."
    '("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil ""))
- '(package-selected-packages
-   '(lsp-ui lsp-treemacs lsp-python-ms helm-lsp flycheck-pos-tip pos-tip dap-mode bui tree-mode company-lsp lsp-mode ansi shut-up git commander company-tabnine unicode-escape names import-js grizzl add-node-modules-path idris-mode prop-menu org-projectile-helm lv transient jinja2-mode company-ansible ansible-doc ansible sesman org-mime j-mode graphviz-dot-mode floobits ghub let-alist memory-usage helm-gtags godoctor go-rename go-guru go-eldoc ggtags flycheck-gometalinter company-go go-mode auctex yapfify yaml-mode winum tide typescript-mode flycheck sql-indent slime-company slime pyvenv pytest pyenv-mode py-isort pip-requirements phpunit phpcbf php-extras org-category-capture live-py-mode hy-mode helm-pydoc fuzzy flymd php-mode cython-mode company-auctex company-anaconda common-lisp-snippets anaconda-mode pythonic php-auto-yasnippets drupal-mode auctex-latexmk tablist skewer-mode json-snatcher json-reformat js2-mode parent-mode projectile request haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ git-gutter flx magit magit-popup git-commit with-editor smartparens iedit anzu evil goto-chg undo-tree simple-httpd org ace-jump-mode noflet powerline popwin elfeed f diminish diff-hl web-completion-data dash-functional tern company hydra inflections edn multiple-cursors paredit s peg eval-sexp-fu highlight cider seq spinner queue pkg-info clojure-mode epl bind-map bind-key yasnippet packed dash helm avy helm-core async auto-complete popup package-build alert log4e gntp fringe-helper ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shen-mode scss-mode sass-mode restart-emacs rainbow-delimiters quelpa pug-mode persp-mode pcre2el paradox orgit org-present org-pomodoro org-download org-bullets org-beautify-theme open-junk-file noctilux-theme neotree move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gnu-apl-mode gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md geiser flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu emmet-mode elm-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies edit-server dumb-jump define-word csv-mode company-web company-statistics column-enforce-mode coffee-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))
+ '(package-selected-packages nil)
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
@@ -784,7 +683,225 @@ This function is called at the very end of Spacemacs initialization."
      (javascript-backend . lsp)))
  '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
  '(shr-external-browser 'eww-browse-url)
- '(tramp-default-method "ssh" nil (tramp))
+ '(tramp-default-method "ssh")
+ '(trash-directory "~/.Trash")
+ '(vc-follow-symlinks t)
+ '(web-mode-code-indent-offset 2))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
+ '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
+ '(font-lock-comment-face ((t (:foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
+ '(font-lock-constant-face ((t (:foreground "#ccaaff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-doc-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant normal :weight extra-light :height 0.9 :family "Verdana"))))
+ '(font-lock-function-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-keyword-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-preprocessor-face ((t (:foreground "#ff8888" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(j-conjunction-face ((t (:foreground "IndianRed1"))))
+ '(j-other-face ((t (:foreground "plum1"))))
+ '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
+;) ; i don't understand how this is here
+
+
+
+
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#292929" "#ff3333" "#aaffaa" "#aaeecc" "#aaccff" "#FF1F69" "#aadddd" "#999999"])
+ '(background-color "#000000")
+ '(background-mode dark)
+ '(browse-url-secondary-browser-function 'eww-browse-url)
+ '(buffer-stack-untracked
+   '("KILL" "*Compile-Log*" "*Compile-Log-Show*" "*Group*" "*Completions*"))
+ '(cider-lein-command "lein")
+ '(cider-lein-global-options "with-profile +matt")
+ '(cider-print-fn 'fipp)
+ '(cider-print-options nil)
+ '(cider-print-quota 1000000000)
+ '(cider-repl-history-file "~/emacs-files/cider-history")
+ '(cider-repl-history-show-preview nil)
+ '(cider-repl-history-size 500000)
+ '(cider-repl-print-length 1000000)
+ '(cider-repl-prompt-function 'cider-repl-prompt-abbreviated)
+ '(cider-repl-require-ns-on-set t)
+ '(cider-repl-use-clojure-font-lock nil)
+ '(cider-session-name-template "%J:%r")
+ '(column-number-mode t)
+ '(company-files-exclusions ".org")
+ '(company-tabnine-wait 0.0)
+ '(compilation-message-face 'default)
+ '(completion-ignored-extensions
+   '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
+ '(csv-separators '("," "	"))
+ '(cursor-color "#cccccc")
+ '(custom-enabled-themes '(noctilux))
+ '(custom-safe-themes
+   '("755e5aa14fa530fdadb7d1082c4b3fddbf52b84f02cd414497b7324c85331dd7" "a6fc75241bcc7ce6f68dcfd0de2d4c4bd804d0f8cd3a9f08c3a07654160e9abe" "b4c86bae65473e89293653058dabdb2a9895b2d08b5df49479017a91bc8240a0" "a7c40bb695b82331b68aa40750ee81ef6f8924f591cd78ea3260314b8bfdf6c2" "4639288d273cbd3dc880992e6032f9c817f17c4a91f00f3872009a099f5b3f84" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
+ '(desktop-save t)
+ '(desktop-save-mode t)
+ '(dired-listing-switches
+   "-lahBF --ignore=#* --ignore=.svn --ignore=.git --group-directories-first")
+ '(dired-recursive-deletes 'always)
+ '(dired-use-ls-dired 'unspecified)
+ '(dirtrack-list '("|mfm|  \\([^|]*\\)" 1))
+ '(evil-default-cursor '(hbar))
+ '(evil-ex-search-highlight-all t)
+ '(evil-move-beyond-eol t)
+ '(evil-move-cursor-back nil)
+ '(evil-want-Y-yank-to-eol t)
+ '(foreground-color "#cccccc")
+ '(fringe-mode nil nil (fringe))
+ '(global-evil-search-highlight-persist nil)
+ '(global-so-long-mode t)
+ '(global-undo-tree-mode t)
+ '(helm-ag-use-agignore t)
+ '(helm-completion-style 'emacs)
+ '(helm-grep-ignored-directories
+   '("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/"))
+ '(inferior-lisp-program "sbcl" t)
+ '(isearch-allow-scroll t)
+ '(j-console-cmd "/Applications/j64-804/bin/jconsole")
+ '(js-indent-level 2)
+ '(js2-strict-missing-semi-warning nil)
+ '(kill-ring-max 6000)
+ '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 14))
+ '(magit-save-repository-buffers 'dontask)
+ '(nrepl-log-messages t)
+ '(nrepl-sync-request-timeout 30)
+ '(nrepl-use-ssh-fallback-for-remote-hosts t)
+ '(ns-antialias-text t)
+ '(org-adapt-indentation nil)
+ '(org-agenda-custom-commands
+   '(("n" "Agenda and all TODOs"
+      ((agenda "" nil)
+       (alltodo "" nil))
+      nil)
+     ("x" agenda "doesn't have data like :food:interruptions:reading:"
+      ((org-agenda-ndays 7)
+       (org-agenda-filter-preset
+        '("-reading" "-food" "-interrupt"))))))
+ '(org-agenda-files
+   '("~/org/agenda.org"))
+ '(org-capture-templates
+   '(("e" "emacs annoyances TEST" entry
+      (file+headline "~/org/home.org" "emacs annoyances")
+      "**  %?
+%U
+")
+     ("q" "quote" plain
+      (file+headline "~/org/notes.org" "quotes")
+      "** %?
+%a
+%U
+%i
+" :clock-in t :clock-resume t)
+     ("n" "note" plain
+      (file+headline "~/org/notes.org" "Notes")
+      "**  %?
+%U
+
+%a")
+     ("s" "someday to read" entry
+      (file+headline "~/org/home.org" "someday to read")
+      "** %?
+%U
+
+%a
+%i
+
+")
+     ("f" "food" entry
+      (file+headline "~/org/schedule.org" "food")
+      "**  %?
+%U
+")
+     ("d" "diary entry" entry
+      (file+headline "notes.org" "diary")
+      "** 
+%U
+
+%a
+%i
+%?
+" :clock-in t :clock-resume t)
+     ("i" "interruption" entry
+      (file+headline "schedule.org" "interruptions")
+      "** %?
+%a
+%U
+%i" :clock-in t :clock-resume t)
+     ("w" "work note" entry
+      (file+headline "~/org/newwork.org" "work refile")
+      "** %?
+%a
+%U
+%i" :clock-in t :clock-resume t)
+     ("a" "agenda note" entry
+      (file+headline "~/org/agenda.org" "start")
+      "** %?
+%a
+%U
+%i" :clock-in t :clock-resume t)
+     ("j" "jokes" entry
+      (file+headline "~/org/home.org" "jokes")
+      "** %?")
+     ("o" "word definition" entry
+      (file+headline "schedule.org" "definitions")
+      "** %?
+%a
+%U
+%i" :clock-in t :clock-resume t)))
+ '(org-clock-mode-line-total 'current)
+ '(org-confirm-babel-evaluate nil)
+ '(org-habit-graph-column 80)
+ '(org-refile-targets
+   '((org-agenda-files :regexp . "time spent")
+     (org-agenda-files :regexp . "someday to read")
+     (org-agenda-files :regexp . "catapult")
+     (org-agenda-files :regexp . "UR")
+     (org-agenda-files :regexp . "paypal")
+     (org-agenda-files :regexp . "jokes")
+     (org-agenda-files :regexp . "ephemeral")))
+ '(org-src-block-faces '(("clojure" default)))
+ '(org-startup-truncated nil)
+ '(org-stuck-projects
+   '("LEVEL>1/TODO"
+     ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
+     nil ""))
+ '(package-selected-packages
+   '(csv-mode yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide tagedit symon symbol-overlay string-inflection sql-indent spaceline-all-the-icons smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements pcre2el password-generator paradox overseer orgit org-superstar org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-brain org-beautify-theme open-junk-file nodejs-repl noctilux-theme nameless move-text mmm-mode markdown-toc magit-svn magit-section magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode link-hint json-navigator json-mode js2-refactor js-doc jinja2-mode j-mode indent-guide importmagic impatient-mode idris-mode hybrid-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode diminish devdocs define-word cython-mode company-web company-tabnine company-reftex company-auctex company-ansible company-anaconda column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+ '(paradox-github-token t)
+ '(projectile-enable-caching t)
+ '(projectile-global-mode t)
+ '(projectile-globally-ignored-directories
+   '("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes"))
+ '(projectile-globally-ignored-file-suffixes '(".class" "class"))
+ '(projectile-globally-ignored-files '("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#"))
+ '(projectile-indexing-method 'native)
+ '(read-buffer-completion-ignore-case t)
+ '(safe-local-variable-values
+   '((cider-ns-refresh-after-fn . "integrant.repl/resume")
+     (cider-ns-refresh-before-fn . "integrant.repl/suspend")
+     (javascript-backend . tern)
+     (javascript-backend . lsp)))
+ '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
+ '(shr-external-browser 'eww-browse-url)
+ '(tramp-default-method "ssh")
  '(trash-directory "~/.Trash")
  '(vc-follow-symlinks t)
  '(web-mode-code-indent-offset 2))
@@ -808,7 +925,3 @@ This function is called at the very end of Spacemacs initialization."
  '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 )
-
-
-
-
