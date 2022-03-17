@@ -87,27 +87,6 @@ You should not put any user code in there besides modifying the variable
 values."
 
 
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(default ((t (:inherit nil :extend nil :stipple nil :background "#000000" :foreground "#b2b2b2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
-;;  '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
-;;  '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
-;;  '(font-lock-comment-face ((t (:background "#000" :foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
-;;  '(font-lock-constant-face ((t (:foreground "#ccaaff" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-doc-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant normal :weight extra-light :height 0.9 :family "Verdana"))))
-;;  '(font-lock-function-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-keyword-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-preprocessor-face ((t (:foreground "#ff8888" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
-;;  '(j-conjunction-face ((t (:foreground "IndianRed1"))))
-;;  '(j-other-face ((t (:foreground "plum1"))))
-;;  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
-
   (setq byte-compile-warnings '(cl-functions)) ; trying cl is deprecated what the fuck i hate it
 
   ;; This setq-default sexp is an exhaustive list of all the supported
@@ -266,13 +245,6 @@ user code."
       (kbd ", l") 'j-console-execute-line
       (kbd ", h") 'j-help-lookup-symbol-at-point
       (kbd ", H") 'j-help-lookup-symbol))
-
-  ; (setq debug-on-error t) ; don't know emacs 28!
-
-  ;; BUG 
-  ;;(add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
-  ;; (evil-define-key 'motion 'evil-org-mode
-  ;;   (kbd "0") 'evil-org-beginning-of-line)
   )
 
 
@@ -458,8 +430,6 @@ layers configuration. You are free to put any user code."
 (fmakunbound 'blackbox-mode)
 (fmakunbound 'blacken-mode)
 (fmakunbound 'blacken-buffer)
-
-; (setenv "PATH" (concat (getenv "PATH") ":/usr/bin/")) ;; second attempt as flies to wanton boys are we to th' gods
 
 (desktop-read) ; don't know why emacs doesn't load the desktop on startup
 )
