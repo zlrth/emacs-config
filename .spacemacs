@@ -87,7 +87,6 @@ You should not put any user code in there besides modifying the variable
 values."
 
 
-  ;; I HATE MOTHERFUCKING EMACS SO GODDAMN MUCH. 
 ;; (custom-set-faces
 ;;  ;; custom-set-faces was added by Custom.
 ;;  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -460,30 +459,8 @@ layers configuration. You are free to put any user code."
 (fmakunbound 'blacken-mode)
 (fmakunbound 'blacken-buffer)
 
-;; either i had changed noctilux's default black, or they changed it over time. regardless, off-black is bad.
-;; 2020-05-05-- probably didn't work because i was using defvar, not setq. defvar doesn't override already defined variables.
-(defvar noctilux-colors           ; ANSI(Noctilux terminal)
-               ;; name     sRGB      Gen RGB   256       16              8
-               '((base03  "#000000" "#000000" "#000000" "black"   "black") ;; this is the one i changed
-                 (base02  "#292929" "#292929" "#292929" "black"         "black")
-                 (base01  "#5f5f5f" "#5f5f5f" "#5f5f5f" "brightgreen"   "green")
-                 (base00  "#999999" "#999999" "#999999" "brightyellow"  "yellow")
-                 (base0   "#cccccc" "#cccccc" "#cccccc" "brightblue"    "blue")
-                 (base1   "#aaaaaa" "#aaaaaa" "#aaaaaa" "brightcyan"    "cyan")
-                 (base2   "#e9e2cb" "#e9e2cb" "#e9e2cb" "white"         "white")
-                 (base3   "#fcf4dc" "#fcf4dc" "#fcf4dc" "brightwhite"   "white")
-                 (yellow  "#aaeecc" "#aaeecc" "#aaeecc" "yellow"        "yellow")
-                 (orange  "#ff8888" "#ff8888" "#ff8888" "brightred"     "red")
-                 (red     "#ff3333" "#ff3333" "#ff3333" "red"           "red")
-                 (magenta "#FF1F69" "#FF1F69" "#FF1F69" "magenta"       "magenta")
-                 (violet  "#ccaaff" "#ccaaff" "#ccaaff" "brightmagenta" "magenta")
-                 (blue    "#aaccff" "#aaccff" "#aaccff" "blue"          "blue")
-                 (cyan    "#aadddd" "#aadddd" "#aadddd" "cyan"          "cyan")
-                 (white   "#ffffff" "#ffffff" "#ffffff" "white"          "white")
-                 (green   "#aaffaa" "#aaffaa" "#aaffaa" "green"         "green")))
-
 ; (setenv "PATH" (concat (getenv "PATH") ":/usr/bin/")) ;; second attempt as flies to wanton boys are we to th' gods
-; (load-theme 'noctilux t) ; needed because now noctilux-colors is fucking loaded after the initial load of the theme. need the second arg because emacs doesn't fucking treat the fucking theme as safe. ; emacs 28 this doesn't fucking work. fucking god damnit.
+
 (desktop-read) ; don't know why emacs doesn't load the desktop on startup
 )
 
@@ -656,8 +633,6 @@ This function is called at the very end of Spacemacs initialization."
    '("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil ""))
- '(package-selected-packages
-   '(csv-mode yasnippet-snippets yapfify yaml-mode ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide tagedit symon symbol-overlay string-inflection sql-indent spaceline-all-the-icons smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode popwin pippel pipenv pip-requirements pcre2el password-generator paradox overseer orgit org-superstar org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-brain org-beautify-theme open-junk-file nodejs-repl noctilux-theme nameless move-text mmm-mode markdown-toc magit-svn magit-section magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode link-hint json-navigator json-mode jinja2-mode j-mode indent-guide importmagic impatient-mode idris-mode hybrid-mode hungry-delete hl-todo highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav editorconfig edit-server dumb-jump dotenv-mode diminish devdocs define-word cython-mode company-web company-tabnine company-reftex company-auctex company-ansible company-anaconda column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
@@ -673,6 +648,7 @@ This function is called at the very end of Spacemacs initialization."
  '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
  '(tramp-default-method "ssh")
  '(trash-directory "~/.Trash")
+ '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache")))
  '(vc-follow-symlinks t)
  '(warning-suppress-types '((comp)))
  '(web-mode-code-indent-offset 2))
@@ -681,7 +657,6 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#000000" :foreground "#b2b2b2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
  '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
  '(font-lock-comment-delimiter-face ((t (:foreground "gray70" :inverse-video nil :underline nil :slant italic :weight normal :height 0.8))))
  '(font-lock-comment-face ((t (:background "#000" :foreground "gray60" :inverse-video nil :underline nil :slant italic :weight light :height 0.9 :family "Verdana"))))
@@ -693,6 +668,7 @@ This function is called at the very end of Spacemacs initialization."
  '(font-lock-string-face ((t (:foreground "#aadddd" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
+ '(highlight-parentheses-highlight ((nil (:weight ultra-bold))) t)
  '(j-conjunction-face ((t (:foreground "IndianRed1"))))
  '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
