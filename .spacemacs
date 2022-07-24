@@ -471,7 +471,7 @@ This function is called at the very end of Spacemacs initialization."
  '(compilation-message-face 'default)
  '(completion-ignored-extensions
    '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
- '(csv-separators '("," "	"))
+ '(csv-separators '("," "\11"))
  '(cursor-color "#cccccc")
  '(custom-safe-themes
    '("9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" "755e5aa14fa530fdadb7d1082c4b3fddbf52b84f02cd414497b7324c85331dd7" "a6fc75241bcc7ce6f68dcfd0de2d4c4bd804d0f8cd3a9f08c3a07654160e9abe" "b4c86bae65473e89293653058dabdb2a9895b2d08b5df49479017a91bc8240a0" "a7c40bb695b82331b68aa40750ee81ef6f8924f591cd78ea3260314b8bfdf6c2" "4639288d273cbd3dc880992e6032f9c817f17c4a91f00f3872009a099f5b3f84" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
@@ -522,70 +522,40 @@ This function is called at the very end of Spacemacs initialization."
  '(org-capture-templates
    '(("e" "emacs annoyances TEST" entry
       (file+headline "~/org/home.org" "emacs annoyances")
-      "**  %?
-%U
-")
+      "**  %?\12%U\12")
      ("q" "quote" plain
       (file+headline "~/org/notes.org" "quotes")
-      "** %?
-%U
-%i
-" :clock-in t :clock-resume t)
+      "** %?\12%U\12%i\12" :clock-in t :clock-resume t)
      ("n" "note" plain
       (file+headline "~/org/notes.org" "Notes")
-      "**  %?
-%U
-
-")
+      "**  %?\12%U\12\12")
      ("s" "someday to read" entry
       (file+headline "~/org/home.org" "someday to read")
-      "** %?
-%U
-
-%i
-
-")
+      "** %?\12%U\12\12%i\12\12")
      ("f" "food" entry
       (file+headline "~/org/schedule.org" "food")
-      "**  %?
-%U
-")
+      "**  %?\12%U\12")
      ("d" "diary entry" entry
       (file+headline "notes.org" "diary")
-      "** 
-%U
-
-%i
-%?
-" :clock-in t :clock-resume t)
+      "** \12%U\12\12%i\12%?\12" :clock-in t :clock-resume t)
      ("i" "interruption" entry
       (file+headline "schedule.org" "interruptions")
-      "** %?
-%U
-%i" :clock-in t :clock-resume t)
+      "** %?\12%U\12%i" :clock-in t :clock-resume t)
      ("w" "work note" entry
-      (file+headline "~/org/work-2021.org" "work refile")
-      "** 
-%U
-%?" :clock-in t :clock-resume t)
+      (file+headline "~/org/work-2022.org" "work refile")
+      "** \12%U\12%?" :clock-in t :clock-resume t)
      ("W" "work timetracking note" entry
       (file+headline "~/org/work-timetracking.org" "work refile")
-      "** 
-%U
-%?" :clock-in t :clock-resume t)
+      "** \12%U\12%?" :clock-in t :clock-resume t)
      ("a" "agenda note" entry
       (file+headline "~/org/agenda.org" "start")
-      "** %?
-%U
-%i" :clock-in t :clock-resume t)
+      "** %?\12%U\12%i" :clock-in t :clock-resume t)
      ("j" "jokes" entry
       (file+headline "~/org/home.org" "jokes")
       "** %?")
      ("o" "word definition" entry
       (file+headline "schedule.org" "definitions")
-      "** %?
-%U
-%i" :clock-in t :clock-resume t)))
+      "** %?\12%U\12%i" :clock-in t :clock-resume t)))
  '(org-clock-mode-line-total 'current)
  '(org-confirm-babel-evaluate nil)
  '(org-habit-graph-column 80)
@@ -610,7 +580,7 @@ This function is called at the very end of Spacemacs initialization."
    '("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes"))
  '(projectile-globally-ignored-file-suffixes '(".class" "class"))
  '(projectile-globally-ignored-files '("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#"))
- '(projectile-indexing-method 'native)
+ '(projectile-indexing-method 'hybrid)
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
    '((cider-ns-refresh-after-fn . "integrant.repl/resume")
