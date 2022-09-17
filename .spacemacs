@@ -59,7 +59,6 @@ values."
    dotspacemacs-additional-packages '(
                                       indium ; javascript
                                       company
-                                      company-tabnine
                                       ; gnu-apl-mode ; emacs 28! cl is deprecated!
                                       shen-mode
                                       ; org-projectile  ; emacs 28! cl is deprecated!
@@ -69,9 +68,12 @@ values."
                                       (shen-mode :location (recipe :fetcher gitlab :repo "zlrth/shen-mode")))
 
     ;; A list of packages and/or extensions that will not be install and loaded.
-    ;; dotspacemacs-excluded-packages '(persp-mode
-    ;;                                  perspective
-    ;;                                  persp-projectile)
+    dotspacemacs-excluded-packages '(;;persp-mode
+                                     ;;perspective
+                                     ;;persp-projectile
+                                     ;; emacs 29 includes a string-edit function; this clashes with spacemacs' library function
+                                     string-edit
+                                     )
 
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -253,6 +255,7 @@ user code."
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
+  (require 'calc) ;; https://github.com/syl20bnr/spacemacs/issues/11585#issuecomment-1207343886
   (let ((gls (executable-find "gls")))
     (when gls
       (setq insert-directory-program gls)))
@@ -467,7 +470,6 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
- '(company-tabnine-wait 0.0)
  '(compilation-message-face 'default)
  '(completion-ignored-extensions
    '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
@@ -508,7 +510,6 @@ This function is called at the very end of Spacemacs initialization."
  '(nrepl-sync-request-timeout 30)
  '(nrepl-use-ssh-fallback-for-remote-hosts t)
  '(ns-antialias-text t)
- '(org-adapt-indentation nil)
  '(org-agenda-custom-commands
    '(("n" "Agenda and all TODOs"
       ((agenda "" nil)
