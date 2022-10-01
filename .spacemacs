@@ -24,7 +24,7 @@ values."
      xclipboard ; needed for terminal emacs. uses pbcopy and pbpaste
      sql
      react
-     python
+     ;; python ; broken on emacs 29? open issue: https://github.com/syl20bnr/spacemacs/issues/15548
      yaml
      latex
      node
@@ -265,8 +265,11 @@ layers configuration. You are free to put any user code."
   ;; this is bugging out
   ;; (evil-set-initial-state 'org-agenda-mode 'emacs)
 
+  (evil-define-key 'motion evil-org-mode-map (kbd "j") 'evil-next-visual-line)
   (with-eval-after-load 'evil-org
-    (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below))
+    (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
+    (evil-define-key 'normal evil-org-mode-map "k" 'evil-previous-visual-line)
+    )
 
   (when (version<= "9.2" (org-version))
     (require 'org-tempo))
