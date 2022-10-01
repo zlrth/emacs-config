@@ -19,7 +19,6 @@ values."
    '(csv
      typescript
      ansible
-     idris
      ;; ansible
      xclipboard ; needed for terminal emacs. uses pbcopy and pbpaste
      sql
@@ -64,7 +63,6 @@ values."
                                       ; org-projectile  ; emacs 28! cl is deprecated!
                                       ; org-projectile-helm  ; emacs 28! cl is deprecated!
                                       org-beautify-theme
-                                      (j-mode    :location (recipe :fetcher github :repo "zlrth/j-mode"))
                                       (shen-mode :location (recipe :fetcher gitlab :repo "zlrth/shen-mode")))
 
     ;; A list of packages and/or extensions that will not be install and loaded.
@@ -232,21 +230,6 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
-  (with-eval-after-load 'j-mode
-    (evil-define-key 'normal j-mode-map
-      (kbd ", b") 'j-console-execute-line
-      (kbd ", s") 'j-console
-      (kbd ", h") 'j-help-lookup-symbol-at-point
-      (kbd ", H") 'j-help-lookup-symbol))
-  ;; TODO j-jump-to-inf-buffer
-  ;; TODO open eww in fixed opposing buffer
-  ;; TODO buffer-read-only unset in *eww* so that you can edit the expressions _inside_ the *eww* buffer.
-
-  (with-eval-after-load 'eww-mode
-    (evil-define-key 'normal eww-mode-map
-      (kbd ", l") 'j-console-execute-line
-      (kbd ", h") 'j-help-lookup-symbol-at-point
-      (kbd ", H") 'j-help-lookup-symbol))
   )
 
 
@@ -503,7 +486,6 @@ This function is called at the very end of Spacemacs initialization."
    '("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/"))
  '(inferior-lisp-program "sbcl" t)
  '(isearch-allow-scroll t)
- '(j-console-cmd "/Applications/j64-804/bin/jconsole")
  '(js-indent-level 2)
  '(js2-strict-missing-semi-warning nil)
  '(kill-ring-max 6000)
@@ -546,7 +528,7 @@ This function is called at the very end of Spacemacs initialization."
       (file+headline "schedule.org" "interruptions")
       "** %?\12%U\12%i" :clock-in t :clock-resume t)
      ("w" "work note" entry
-      (file+headline "~/org/work-2022.org" "work refile")
+      (file+headline "~/org/work-mid-2022.org" "work refile")
       "** \12%U\12%?" :clock-in t :clock-resume t)
      ("W" "work timetracking note" entry
       (file+headline "~/org/work-timetracking.org" "work refile")
@@ -616,7 +598,5 @@ This function is called at the very end of Spacemacs initialization."
  '(font-lock-type-face ((t (:foreground "#aaeecc" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(font-lock-variable-name-face ((t (:foreground "#aaccff" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(highlight-parentheses-highlight ((nil (:weight ultra-bold))) t)
- '(j-conjunction-face ((t (:foreground "IndianRed1"))))
- '(j-other-face ((t (:foreground "plum1"))))
  '(org-todo ((t (:background "#020202" :foreground "#ff3333" :inverse-video nil :underline nil :slant normal :weight bold)))))
 )
