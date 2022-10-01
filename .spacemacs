@@ -66,10 +66,7 @@ values."
                                       (shen-mode :location (recipe :fetcher gitlab :repo "zlrth/shen-mode")))
 
     ;; A list of packages and/or extensions that will not be install and loaded.
-    dotspacemacs-excluded-packages '(;;persp-mode
-                                     ;;perspective
-                                     ;;persp-projectile
-                                     ;; emacs 29 includes a string-edit function; this clashes with spacemacs' library function
+    dotspacemacs-excluded-packages '(;; emacs 29 includes a string-edit function; this clashes with spacemacs' library function
                                      string-edit
                                      )
 
@@ -86,8 +83,8 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
 
-
-  (setq byte-compile-warnings '(cl-functions)) ; trying cl is deprecated what the fuck i hate it
+  ;; 2022-10-01 commenting out
+  ;; (setq byte-compile-warnings '(cl-functions)) ; trying cl is deprecated what the fuck i hate it
 
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
@@ -113,10 +110,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(;; monokai
-                         ;; noctilux ;; M1X
-                         spacemacs-dark
-                         )
+   dotspacemacs-themes '(spacemacs-dark)
+
    desktop-dirname "/Users/matt/emacs.d/cache/"
 
    ;; If non nil the cursor color matches the state color.
@@ -238,7 +233,10 @@ user code."
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
-  (require 'calc) ;; https://github.com/syl20bnr/spacemacs/issues/11585#issuecomment-1207343886
+
+  ;; 2022-10-01 commenting out
+  ;;(require 'calc) ;; https://github.com/syl20bnr/spacemacs/issues/11585#issuecomment-1207343886
+
   (let ((gls (executable-find "gls")))
     (when gls
       (setq insert-directory-program gls)))
@@ -248,14 +246,9 @@ layers configuration. You are free to put any user code."
   ;; this is bugging out
   ;; (evil-set-initial-state 'org-agenda-mode 'emacs)
 
-  (evil-define-key 'motion evil-org-mode-map (kbd "j") 'evil-next-visual-line)
-  (with-eval-after-load 'evil-org
-    (evil-define-key 'normal evil-org-mode-map "o" 'evil-open-below)
-    (evil-define-key 'normal evil-org-mode-map "k" 'evil-previous-visual-line)
-    )
 
-  (when (version<= "9.2" (org-version))
-    (require 'org-tempo))
+  ;; 2022-10-01 commenting out
+  ;; (when (version<= "9.2" (org-version)) (require 'org-tempo))
 
   (setq system-uses-terminfo nil)
 
@@ -379,7 +372,7 @@ layers configuration. You are free to put any user code."
 
 (require 'undo-tree)
 (remove-hook 'menu-bar-update-hook 'undo-tree-update-menu-bar) ; from the reddit post. some (perspectives) still don't work.
-(define-key persp-mode-map      [menu-bar] nil)
+(define-key persp-mode-map [menu-bar] nil)
 (define-key undo-tree-map [menu-bar] nil)
 (define-key global-map [menu-bar] nil)
 
@@ -461,8 +454,6 @@ This function is called at the very end of Spacemacs initialization."
    '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
  '(csv-separators '("," "\11"))
  '(cursor-color "#cccccc")
- '(custom-safe-themes
-   '("9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" "755e5aa14fa530fdadb7d1082c4b3fddbf52b84f02cd414497b7324c85331dd7" "a6fc75241bcc7ce6f68dcfd0de2d4c4bd804d0f8cd3a9f08c3a07654160e9abe" "b4c86bae65473e89293653058dabdb2a9895b2d08b5df49479017a91bc8240a0" "a7c40bb695b82331b68aa40750ee81ef6f8924f591cd78ea3260314b8bfdf6c2" "4639288d273cbd3dc880992e6032f9c817f17c4a91f00f3872009a099f5b3f84" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "8885761700542f5d0ea63436874bf3f9e279211707d4b1ca9ed6f53522f21934" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "e297f54d0dc0575a9271bb0b64dad2c05cff50b510a518f5144925f627bb5832" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(dired-listing-switches
