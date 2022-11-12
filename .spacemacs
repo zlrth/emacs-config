@@ -16,7 +16,8 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(csv
+   '(python
+     csv
      typescript
      ansible
      ;; ansible
@@ -30,6 +31,7 @@ values."
      ;; pdf
      markdown
      html
+     terraform
      clojure ;; :variables clojure-enable-fancify-symbols t ;; put in a () if you want this. dunno if it's buggy
      ; common-lisp emacs 28! cl is deprecated!
 
@@ -123,7 +125,6 @@ values."
                                :weight bold ;; bold is normal and normal is bold. wtf.
                                :width normal
                                :powerline-scale 1.1)
-   ;; The leader ke
 
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -262,6 +263,10 @@ layers configuration. You are free to put any user code."
                                     (define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)))
   ;; this may work
   (setq-default word-wrap t)
+  ;; same as below
+  (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
+  ;; disable org-capture's questionable behavior to override truncate-lines
+  (add-hook 'org-capture-mode-hook (lambda () (setq truncate-lines nil)))
 
 
   ;; https://www.emacswiki.org/emacs/ShellDirtrackByPrompt#toc2
@@ -520,7 +525,7 @@ This function is called at the very end of Spacemacs initialization."
       "** %?\12%U\12%i" :clock-in t :clock-resume t)
      ("w" "work note" entry
       (file+headline "~/org/work-mid-2022.org" "work refile")
-      "** \12%U\12%?" :clock-in t :clock-resume t)
+      "** %?\12%U\12" :clock-in t :clock-resume t)
      ("W" "work timetracking note" entry
       (file+headline "~/org/work-timetracking.org" "work refile")
       "** \12%U\12%?" :clock-in t :clock-resume t)
@@ -550,6 +555,8 @@ This function is called at the very end of Spacemacs initialization."
    '("LEVEL>1/TODO"
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil ""))
+ '(package-selected-packages
+   '(pyenv-mode pythonic pylookup pytest pyvenv sphinx-doc stickyfunc-enhance xcscope yapfify yasnippet-snippets yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide term-cursor tagedit symon symbol-overlay string-inflection sql-indent spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs request rainbow-delimiters quickrun pug-mode prettier-js popwin pcre2el password-generator paradox overseer orgit-forge org-superstar org-rich-yank org-projectile org-present org-pomodoro org-mime org-download org-contrib org-cliplink org-beautify-theme open-junk-file npm-mode nodejs-repl nameless multi-line mmm-mode markdown-toc macrostep lorem-ipsum livid-mode link-hint json-reformat json-navigator json-mode js-doc jinja2-mode inspector info+ indium indent-guide impatient-mode hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-ediff evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav elisp-def editorconfig edit-server dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word csv-mode company-web company-reftex company-math company-auctex company-ansible column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
@@ -574,7 +581,6 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#000" :foreground "#b2b2b2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 120 :width normal :foundry "nil" :family "Monaco"))))
  '(dired-directory ((t (:foreground "#4f97d7" :background "#000" :inherit bold))))
  '(dired-symlink ((t (:foreground "#28def0" :background "#000" :inherit bold))))
  '(font-lock-builtin-face ((t (:foreground "#aaffaa" :inverse-video nil :underline nil :slant normal :weight light))))
