@@ -85,9 +85,6 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
 
-  ;; 2022-10-01 commenting out
-  ;; (setq byte-compile-warnings '(cl-functions)) ; trying cl is deprecated what the fuck i hate it
-
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
