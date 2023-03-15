@@ -16,7 +16,9 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(python
+   '(rust
+     python
+     helm
      csv
      typescript
      ansible
@@ -328,7 +330,8 @@ layers configuration. You are free to put any user code."
 (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
 (define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
 
-(define-key shell-mode-map        (kbd ", s c") 'comint-clear-buffer)
+;; broken 2023-03-14
+;; (define-key shell-mode-map        (kbd ", s c") 'comint-clear-buffer)
 
 (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
@@ -416,6 +419,7 @@ layers configuration. You are free to put any user code."
 (fmakunbound 'blacken-buffer)
 
 (desktop-read) ; don't know why emacs doesn't load the desktop on startup
+(set-background-color "black")
 )
 
 
@@ -441,13 +445,13 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-print-fn 'fipp)
  '(cider-print-options '(("length" 200) ("right-margin" 200)))
  '(cider-print-quota 1000000000)
- '(cider-repl-history-file "~/emacs-files/cider-history")
+ '(cider-repl-history-file "~/emacs-files/cider-history" t)
  '(cider-repl-history-show-preview nil)
  '(cider-repl-history-size 500000)
  '(cider-repl-print-length 1000000)
  '(cider-repl-prompt-function 'cider-repl-prompt-abbreviated)
  '(cider-repl-require-ns-on-set t)
- '(cider-repl-use-clojure-font-lock nil)
+ '(cider-repl-use-clojure-font-lock nil t)
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
@@ -553,7 +557,7 @@ This function is called at the very end of Spacemacs initialization."
      ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
      nil ""))
  '(package-selected-packages
-   '(pyenv-mode pythonic pylookup pytest pyvenv sphinx-doc stickyfunc-enhance xcscope yapfify yasnippet-snippets yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide term-cursor tagedit symon symbol-overlay string-inflection sql-indent spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs request rainbow-delimiters quickrun pug-mode prettier-js popwin pcre2el password-generator paradox overseer orgit-forge org-superstar org-rich-yank org-projectile org-present org-pomodoro org-mime org-download org-contrib org-cliplink org-beautify-theme open-junk-file npm-mode nodejs-repl nameless multi-line mmm-mode markdown-toc macrostep lorem-ipsum livid-mode link-hint json-reformat json-navigator json-mode js-doc jinja2-mode inspector info+ indium indent-guide impatient-mode hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-ediff evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav elisp-def editorconfig edit-server dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word csv-mode company-web company-reftex company-math company-auctex company-ansible column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(helm-tramp cargo counsel-gtags counsel swiper ivy dap-mode lsp-docker lsp-treemacs bui lsp-mode flycheck-rust ggtags helm-gtags racer pos-tip ron-mode rust-mode toml-mode pyenv-mode pythonic pylookup pytest pyvenv sphinx-doc stickyfunc-enhance xcscope yapfify yasnippet-snippets yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide term-cursor tagedit symon symbol-overlay string-inflection sql-indent spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs request rainbow-delimiters quickrun pug-mode prettier-js popwin pcre2el password-generator paradox overseer orgit-forge org-superstar org-rich-yank org-projectile org-present org-pomodoro org-mime org-download org-contrib org-cliplink org-beautify-theme open-junk-file npm-mode nodejs-repl nameless multi-line mmm-mode markdown-toc macrostep lorem-ipsum livid-mode link-hint json-reformat json-navigator json-mode js-doc jinja2-mode inspector info+ indium indent-guide impatient-mode hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-ediff evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav elisp-def editorconfig edit-server dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word csv-mode company-web company-reftex company-math company-auctex company-ansible column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(projectile-enable-caching t)
  '(projectile-global-mode t)
