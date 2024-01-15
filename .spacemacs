@@ -243,12 +243,9 @@ layers configuration. You are free to put any user code."
 
   (setq frame-title-format nil) ; display nothing in the _frame_ title bar. emacs is faster when it doesn't have to calculate anything here.
 
-  ;; this is bugging out
-  ;; (evil-set-initial-state 'org-agenda-mode 'emacs)
+  ;; this is bugging out. [2024-01-14] this is no longer bugging out.
+  (evil-set-initial-state 'org-agenda-mode 'emacs)
 
-
-  ;; 2022-10-01 commenting out
-  ;; (when (version<= "9.2" (org-version)) (require 'org-tempo))
 
   (setq system-uses-terminfo nil)
 
@@ -460,6 +457,8 @@ This function is called at the very end of Spacemacs initialization."
    '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
  '(csv-separators '("," "\11"))
  '(cursor-color "#cccccc")
+ '(custom-safe-themes
+   '("7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" default))
  '(desktop-save t)
  '(desktop-save-mode t)
  '(dired-listing-switches
@@ -474,6 +473,7 @@ This function is called at the very end of Spacemacs initialization."
  '(evil-want-Y-yank-to-eol t)
  '(foreground-color "#cccccc")
  '(fringe-mode nil nil (fringe))
+ '(gc-cons-percentage 0.5)
  '(global-evil-search-highlight-persist nil)
  '(global-so-long-mode t)
  '(global-undo-tree-mode t)
@@ -485,7 +485,7 @@ This function is called at the very end of Spacemacs initialization."
  '(isearch-allow-scroll t)
  '(js-indent-level 2)
  '(js2-strict-missing-semi-warning nil)
- '(kill-ring-max 6000)
+ '(kill-ring-max 1000)
  '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 14))
  '(magit-save-repository-buffers 'dontask)
  '(nrepl-log-messages t)
@@ -501,7 +501,8 @@ This function is called at the very end of Spacemacs initialization."
       ((org-agenda-ndays 7)
        (org-agenda-filter-preset
         '("-reading" "-food" "-interrupt"))))))
- '(org-agenda-files '("~/org/agenda.org"))
+ '(org-agenda-files '("~/org/agenda.org" "~/org/work-2024.org"))
+ '(org-agenda-span 'fortnight)
  '(org-capture-templates
    '(("e" "emacs annoyances TEST" entry
       (file+headline "~/org/home.org" "emacs annoyances")
@@ -525,7 +526,7 @@ This function is called at the very end of Spacemacs initialization."
       (file+headline "schedule.org" "interruptions")
       "** %?\12%U\12%i" :clock-in t :clock-resume t)
      ("w" "work note" entry
-      (file+headline "~/org/work-mid-2022.org" "work refile")
+      (file+headline "~/org/work-2024.org" "work refile")
       "** %?\12%U\12" :clock-in t :clock-resume t)
      ("W" "work timetracking note" entry
       (file+headline "~/org/work-timetracking.org" "work refile")
@@ -568,7 +569,11 @@ This function is called at the very end of Spacemacs initialization."
  '(projectile-indexing-method 'hybrid)
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
-   '((cider-ns-refresh-after-fn . "integrant.repl/resume")
+   '((org-ditaa-jar-path . "~/programs/ditaa/ditaa.jar")
+     (cider-merge-sessions . project)
+     (cider-shadow-default-options . "dev")
+     (cider-default-cljs-repl . shadow)
+     (cider-ns-refresh-after-fn . "integrant.repl/resume")
      (cider-ns-refresh-before-fn . "integrant.repl/suspend")))
  '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
  '(tramp-default-method "ssh")
