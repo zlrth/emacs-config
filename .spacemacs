@@ -17,6 +17,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(rust
+     shell
      python
      helm
      csv
@@ -442,13 +443,13 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-print-fn 'fipp)
  '(cider-print-options '(("length" 200) ("right-margin" 200)))
  '(cider-print-quota 1000000000)
- '(cider-repl-history-file "~/emacs-files/cider-history" t)
+ '(cider-repl-history-file "~/emacs-files/cider-history")
  '(cider-repl-history-show-preview nil)
  '(cider-repl-history-size 500000)
  '(cider-repl-print-length 1000000)
  '(cider-repl-prompt-function 'cider-repl-prompt-abbreviated)
  '(cider-repl-require-ns-on-set t)
- '(cider-repl-use-clojure-font-lock nil t)
+ '(cider-repl-use-clojure-font-lock nil)
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
  '(company-files-exclusions ".org")
@@ -528,6 +529,9 @@ This function is called at the very end of Spacemacs initialization."
      ("w" "work note" entry
       (file+headline "~/org/work-2024.org" "work refile")
       "** %?\12%U\12" :clock-in t :clock-resume t)
+     ("m" "maidstone note" entry
+      (file+headline "~/org/maidstone.org" "maidstone note")
+      "** %?\12%U\12" :clock-in t :clock-resume t)
      ("W" "work timetracking note" entry
       (file+headline "~/org/work-timetracking.org" "work refile")
       "** \12%U\12%?" :clock-in t :clock-resume t)
@@ -569,7 +573,31 @@ This function is called at the very end of Spacemacs initialization."
  '(projectile-indexing-method 'hybrid)
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
-   '((org-ditaa-jar-path . "~/programs/ditaa/ditaa.jar")
+   '((cljr-magic-require-namespaces
+      ("edn" . "clojure.edn")
+      ("fix" . "stylitics.test.helpers.domain-fixtures")
+      ("h.sql" . "honey.sql")
+      ("io" "clojure.java.io" :only
+       ("clj"))
+      ("item.db" . "stylitics.item.db")
+      ("keys" . "bsless.keys")
+      ("low-touch.batch.db" . "stylitics.bundling.low-touch.batch.db")
+      ("math" . "clojure.math")
+      ("match" . "matcher-combinators.matchers")
+      ("schema.query" . "stylitics.postgres.schema.query")
+      ("set" . "clojure.set")
+      ("sql" . "next.jdbc.sql")
+      ("str" . "clojure.string")
+      ("string" . "clojure.string")
+      ("t.a" . "temporal.activity")
+      ("t.c" . "temporal.client.core")
+      ("t.p" . "temporal.promise")
+      ("t.test" . "stylitics.test.helpers.temporal")
+      ("test.db" . "stylitics.test.helpers.db")
+      ("test.redis" . "stylitics.test.helpers.redis")
+      ("walk" . "clojure.walk")
+      ("zip" . "clojure.zip"))
+     (org-ditaa-jar-path . "~/programs/ditaa/ditaa.jar")
      (cider-merge-sessions . project)
      (cider-shadow-default-options . "dev")
      (cider-default-cljs-repl . shadow)
@@ -578,8 +606,10 @@ This function is called at the very end of Spacemacs initialization."
  '(same-window-buffer-names '("*inferior-shen*" "*cider-error*"))
  '(tramp-default-method "ssh")
  '(trash-directory "~/.Trash")
+ '(undo-tree-auto-save-history nil)
  '(undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache")))
  '(vc-follow-symlinks t)
+ '(vterm-max-scrollback 100000)
  '(warning-suppress-types '((comp)))
  '(web-mode-code-indent-offset 2))
 (custom-set-faces
