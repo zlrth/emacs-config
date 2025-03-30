@@ -18,7 +18,8 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(rust
+   '(llm-client
+     rust
      shell
      python
      helm
@@ -202,7 +203,7 @@ values."
    ;; point when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
    ;; tests broke so i added this. other options are 'spacemacs, custom, vim-powerline, vanilla
-   dotspacemacs-mode-line-theme 'vanilla
+   dotspacemacs-mode-line-theme 'spacemacs ;; 'vanilla
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -454,6 +455,7 @@ This function is called at the very end of Spacemacs initialization."
  '(cider-repl-use-clojure-font-lock nil)
  '(cider-session-name-template "%J:%r")
  '(column-number-mode t)
+ '(comint-move-point-for-output 'this)
  '(company-files-exclusions ".org")
  '(compilation-message-face 'default)
  '(completion-ignored-extensions
