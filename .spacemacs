@@ -41,6 +41,7 @@ values."
      terraform
      clojure ;; :variables clojure-enable-fancify-symbols t ;; put in a () if you want this. dunno if it's buggy
 
+     spacemacs-editing ;; needed for undo-tree
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -111,7 +112,7 @@ values."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark)
 
-   desktop-dirname "/Users/matt/emacs.d/cache/"
+   ;; desktop-dirname "/Users/matt/emacs.d/cache/" ;; FUCKED
 
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state nil ; changed because it's now slow?
@@ -250,9 +251,7 @@ layers configuration. You are free to put any user code."
   (add-hook 'clojure-mode-hook (lambda ()
                                  (paredit-mode t)
                                  (rainbow-delimiters-mode-disable))) ;; emacs 28!
-  (add-hook 'lisp-mode-hook (lambda ()
-                              (paredit-mode t)
-                              (rainbow-delimiters-mode-disable)))
+
   (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)
                                     (define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)))
   ;; this may work
@@ -263,9 +262,6 @@ layers configuration. You are free to put any user code."
   (add-hook 'org-capture-mode-hook (lambda () (setq truncate-lines nil)))
 
 
-  ;; https://www.emacswiki.org/emacs/ShellDirtrackByPrompt#toc2
-  ;; doesn't work. wtf. shell-dirtrack-mode nil doesn't work.
-  ;; july 4 2017. maybe i fixed a bug in my regex. but it still doesn't work. don't know why.
   (add-hook 'shell-mode-hook
             (lambda ()
               (setq dirtrack-list '("|mfm| \\([^|]*\\)|" 1 nil))
@@ -326,11 +322,8 @@ layers configuration. You are free to put any user code."
   (define-key evil-normal-state-map (kbd "C-d") 'evil-scroll-down)
   (define-key evil-normal-state-map (kbd "SPC SPC") 'org-capture)
 
-  ;; broken 2023-03-14
-  ;; (define-key shell-mode-map        (kbd ", s c") 'comint-clear-buffer)
-
   (global-set-key (kbd "C-x C-c") 'nil) ;; default C-x C-c is too easy to hit accidentally
-  ;; (global-set-key (kbd "C-x C-b") 'helm-buffers-list) ;; NEED TO REPLACE
+  (global-set-key (kbd "C-x C-b") 'consult-buffer)
 
   (define-key evil-normal-state-map (kbd ", t e") 'm/eval-sexp-and-clojure-test)
 
@@ -369,7 +362,7 @@ layers configuration. You are free to put any user code."
   (setq helm-semantic-fuzzy-match t)
   (setq helm-imenu-fuzzy-match t)
 
-                                        ; global-map uses undo-tree, require it first. doesn't work: https://www.reddit.com/r/emacs/comments/bwleyk/set_debugonerror_to_t_then_startup_with_undotree/
+  ;; global-map uses undo-tree, require it first. doesn't work: https://www.reddit.com/r/emacs/comments/bwleyk/set_debugonerror_to_t_then_startup_with_undotree/
 
   ;; (require 'undo-tree) ;; ERRORING OUT WITH SPACEMACS 30.1
   ;; (remove-hook 'menu-bar-update-hook 'undo-tree-update-menu-bar) ; from the reddit post. some (perspectives) still don't work. SPACEMACS 30.1
@@ -377,7 +370,7 @@ layers configuration. You are free to put any user code."
   ;; (define-key undo-tree-map [menu-bar] nil)
   (define-key global-map [menu-bar] nil)
 
-
+  (print "line 378")
   (define-key emacs-lisp-mode-map [menu-bar] nil)
                                         ; this isn't available for some reason 2021-04-01
                                         ; (define-key projectile-mode-map [menu-bar] nil)
@@ -389,8 +382,6 @@ layers configuration. You are free to put any user code."
   (eval-after-load 'sesman '(define-key sesman-map     [menu-bar] nil))
 
   (setq org-hide-emphasis-markers t) ;; i no longer think this is buffer-local.
-
-  (setq inferior-shen-program " /Users/matt/hacking/shen/shen-json/shen") ;; TODO could i put all of these setq's up in setq-default?
 
   (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 
@@ -413,6 +404,8 @@ layers configuration. You are free to put any user code."
   (fmakunbound 'blackbox-mode)
   (fmakunbound 'blacken-mode)
   (fmakunbound 'blacken-buffer)
+
+  (print "line 413")
 
   (desktop-read) ; don't know why emacs doesn't load the desktop on startup
   (set-background-color "black")
@@ -454,11 +447,18 @@ This function is called at the very end of Spacemacs initialization."
    '(company-files-exclusions ".org")
    '(compilation-message-face 'default)
    '(completion-ignored-extensions
-     '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
+     '(".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo"
+       ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/"
+       ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl"
+       ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl"
+       ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl"
+       ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".fn" ".ky"
+       ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
    '(csv-separators '("," "\11"))
    '(cursor-color "#cccccc")
    '(custom-safe-themes
-     '("7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" default))
+     '("7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
+       "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" default))
    '(desktop-save t)
    '(desktop-save-mode t)
    '(dired-listing-switches
@@ -478,9 +478,10 @@ This function is called at the very end of Spacemacs initialization."
    '(global-so-long-mode t)
    '(global-undo-tree-mode t)
    '(helm-ag-use-agignore t)
-   '(helm-completion-style 'emacs)
+   '(helm-completion-style 'emacs t)
    '(helm-grep-ignored-directories
-     '("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/" "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/"))
+     '("SCCS/" "RCS/" "CVS/" "MCVS/" ".svn/" ".git/" ".hg/" ".bzr/" "_MTN/" "_darcs/"
+       "{arch}/" ".gvfs/" "resources/csv/" "target/" "tmp/"))
    '(inferior-lisp-program "sbcl" t)
    '(isearch-allow-scroll t)
    '(js-indent-level 2)
@@ -493,55 +494,40 @@ This function is called at the very end of Spacemacs initialization."
    '(nrepl-use-ssh-fallback-for-remote-hosts t)
    '(ns-antialias-text t)
    '(org-agenda-custom-commands
-     '(("n" "Agenda and all TODOs"
-        ((agenda "" nil)
-         (alltodo "" nil))
-        nil)
+     '(("n" "Agenda and all TODOs" ((agenda "" nil) (alltodo "" nil)) nil)
        ("x" agenda "doesn't have data like :food:interruptions:reading:"
         ((org-agenda-ndays 7)
-         (org-agenda-filter-preset
-          '("-reading" "-food" "-interrupt"))))))
+         (org-agenda-filter-preset '("-reading" "-food" "-interrupt"))))))
    '(org-agenda-files '("~/org/agenda.org" "~/org/work-2024.org"))
    '(org-agenda-span 'fortnight)
    '(org-capture-templates
      '(("e" "emacs annoyances TEST" entry
-        (file+headline "~/org/home.org" "emacs annoyances")
-        "**  %?\12%U\12")
-       ("q" "quote" plain
-        (file+headline "~/org/notes.org" "quotes")
+        (file+headline "~/org/home.org" "emacs annoyances") "**  %?\12%U\12")
+       ("q" "quote" plain (file+headline "~/org/notes.org" "quotes")
         "** %?\12%U\12%i\12" :clock-in t :clock-resume t)
-       ("n" "note" plain
-        (file+headline "~/org/notes.org" "Notes")
+       ("n" "note" plain (file+headline "~/org/notes.org" "Notes")
         "**  %?\12%U\12\12")
        ("s" "someday to read" entry
         (file+headline "~/org/home.org" "someday to read")
         "** %?\12%U\12\12%i\12\12")
-       ("f" "food" entry
-        (file+headline "~/org/schedule.org" "food")
+       ("f" "food" entry (file+headline "~/org/schedule.org" "food")
         "**  %?\12%U\12")
-       ("d" "diary entry" entry
-        (file+headline "notes.org" "diary")
+       ("d" "diary entry" entry (file+headline "notes.org" "diary")
         "** \12%U\12\12%i\12%?\12" :clock-in t :clock-resume t)
-       ("i" "interruption" entry
-        (file+headline "schedule.org" "interruptions")
+       ("i" "interruption" entry (file+headline "schedule.org" "interruptions")
         "** %?\12%U\12%i" :clock-in t :clock-resume t)
-       ("w" "work note" entry
-        (file+headline "~/org/work-2024.org" "work refile")
+       ("w" "work note" entry (file+headline "~/org/work-5.org" "work refile")
         "** %?\12%U\12" :clock-in t :clock-resume t)
        ("m" "maidstone note" entry
-        (file+headline "~/org/maidstone.org" "maidstone note")
-        "** %?\12%U\12" :clock-in t :clock-resume t)
+        (file+headline "~/org/maidstone.org" "maidstone note") "** %?\12%U\12"
+        :clock-in t :clock-resume t)
        ("W" "work timetracking note" entry
         (file+headline "~/org/work-timetracking.org" "work refile")
         "** \12%U\12%?" :clock-in t :clock-resume t)
-       ("a" "agenda note" entry
-        (file+headline "~/org/agenda.org" "start")
+       ("a" "agenda note" entry (file+headline "~/org/agenda.org" "start")
         "** %?\12%U\12%i" :clock-in t :clock-resume t)
-       ("j" "jokes" entry
-        (file+headline "~/org/home.org" "jokes")
-        "** %?")
-       ("o" "word definition" entry
-        (file+headline "schedule.org" "definitions")
+       ("j" "jokes" entry (file+headline "~/org/home.org" "jokes") "** %?")
+       ("o" "word definition" entry (file+headline "schedule.org" "definitions")
         "** %?\12%U\12%i" :clock-in t :clock-resume t)))
    '(org-clock-mode-line-total 'current)
    '(org-confirm-babel-evaluate nil)
@@ -549,56 +535,138 @@ This function is called at the very end of Spacemacs initialization."
    '(org-refile-targets
      '((org-agenda-files :regexp . "time spent")
        (org-agenda-files :regexp . "someday to read")
-       (org-agenda-files :regexp . "catapult")
-       (org-agenda-files :regexp . "UR")
-       (org-agenda-files :regexp . "paypal")
-       (org-agenda-files :regexp . "jokes")
+       (org-agenda-files :regexp . "catapult") (org-agenda-files :regexp . "UR")
+       (org-agenda-files :regexp . "paypal") (org-agenda-files :regexp . "jokes")
        (org-agenda-files :regexp . "ephemeral")))
    '(org-src-block-faces '(("clojure" default)))
    '(org-startup-truncated nil)
    '(org-stuck-projects
      '("LEVEL>1/TODO"
-       ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED")
-       nil ""))
+       ("NEXT" "SOMEDAY" "READ" "DONE" "INFOED" "CANCELLED" "DEFERRED") nil ""))
    '(package-selected-packages
-     '(helm-tramp cargo counsel-gtags counsel swiper ivy dap-mode lsp-docker lsp-treemacs bui lsp-mode flycheck-rust ggtags helm-gtags racer pos-tip ron-mode rust-mode toml-mode pyenv-mode pythonic pylookup pytest pyvenv sphinx-doc stickyfunc-enhance xcscope yapfify yasnippet-snippets yaml-mode ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org tide term-cursor tagedit symon symbol-overlay string-inflection sql-indent spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle slim-mode shen-mode scss-mode sass-mode rjsx-mode restart-emacs request rainbow-delimiters quickrun pug-mode prettier-js popwin pcre2el password-generator paradox overseer orgit-forge org-superstar org-rich-yank org-projectile org-present org-pomodoro org-mime org-download org-contrib org-cliplink org-beautify-theme open-junk-file npm-mode nodejs-repl nameless multi-line mmm-mode markdown-toc macrostep lorem-ipsum livid-mode link-hint json-reformat json-navigator json-mode js-doc jinja2-mode inspector info+ indium indent-guide impatient-mode hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-cider helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md geiser fuzzy font-lock+ flymd flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-ediff evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu emr emmet-mode elisp-slime-nav elisp-def editorconfig edit-server dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word csv-mode company-web company-reftex company-math company-auctex company-ansible column-enforce-mode clojure-snippets clean-aindent-mode cider-eval-sexp-fu centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile auctex-latexmk ansible-doc ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+     '(helm-tramp cargo counsel-gtags counsel swiper ivy dap-mode lsp-docker
+                  lsp-treemacs bui lsp-mode flycheck-rust ggtags helm-gtags racer
+                  pos-tip ron-mode rust-mode toml-mode pyenv-mode pythonic
+                  pylookup pytest pyvenv sphinx-doc stickyfunc-enhance xcscope
+                  yapfify yasnippet-snippets yaml-mode ws-butler writeroom-mode
+                  winum which-key web-mode web-beautify volatile-highlights
+                  vim-powerline vi-tilde-fringe uuidgen use-package undo-tree
+                  treemacs-projectile treemacs-persp treemacs-magit
+                  treemacs-icons-dired treemacs-evil toc-org tide term-cursor
+                  tagedit symon symbol-overlay string-inflection sql-indent
+                  spacemacs-whitespace-cleanup spacemacs-purpose-popwin
+                  spaceline-all-the-icons space-doc smeargle slim-mode shen-mode
+                  scss-mode sass-mode rjsx-mode restart-emacs request
+                  rainbow-delimiters quickrun pug-mode prettier-js popwin pcre2el
+                  password-generator paradox overseer orgit-forge org-superstar
+                  org-rich-yank org-projectile org-present org-pomodoro org-mime
+                  org-download org-contrib org-cliplink org-beautify-theme
+                  open-junk-file npm-mode nodejs-repl nameless multi-line mmm-mode
+                  markdown-toc macrostep lorem-ipsum livid-mode link-hint
+                  json-reformat json-navigator json-mode js-doc jinja2-mode
+                  inspector info+ indium indent-guide impatient-mode hybrid-mode
+                  hungry-delete holy-mode hl-todo highlight-parentheses
+                  highlight-numbers highlight-indentation hide-comnt help-fns+
+                  helm-xref helm-themes helm-swoop helm-purpose helm-projectile
+                  helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git
+                  helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company
+                  helm-cider helm-c-yasnippet helm-ag google-translate
+                  golden-ratio gnuplot gmail-message-mode gitignore-templates
+                  git-timemachine git-modes git-messenger git-link
+                  git-gutter-fringe gh-md geiser fuzzy font-lock+ flymd
+                  flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse
+                  expand-region evil-visualstar evil-visual-mark-mode
+                  evil-unimpaired evil-tutor evil-textobj-line evil-tex
+                  evil-surround evil-org evil-numbers evil-nerd-commenter
+                  evil-matchit evil-lisp-state evil-lion evil-indent-plus
+                  evil-iedit-state evil-goggles evil-exchange evil-evilified-state
+                  evil-escape evil-ediff evil-easymotion evil-collection
+                  evil-cleverparens evil-args evil-anzu emr emmet-mode
+                  elisp-slime-nav elisp-def editorconfig edit-server dumb-jump
+                  drag-stuff dotenv-mode dired-quick-sort diminish devdocs
+                  define-word csv-mode company-web company-reftex company-math
+                  company-auctex company-ansible column-enforce-mode
+                  clojure-snippets clean-aindent-mode cider-eval-sexp-fu
+                  centered-cursor-mode browse-at-remote auto-yasnippet
+                  auto-highlight-symbol auto-compile auctex-latexmk ansible-doc
+                  ansible aggressive-indent ace-link ace-jump-helm-line ac-ispell))
    '(paradox-github-token t)
    '(projectile-enable-caching t)
    '(projectile-global-mode t)
    '(projectile-globally-ignored-directories
-     '("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata" "*.metadata*" "class" "classes"))
+     '("node_modules" ".idea" ".eunit" ".git" ".hg" ".fslckout" ".bzr" "_darcs"
+       ".tox" ".svn" ".repl" "target" "*compiled*" "*goog*" ".metadata"
+       "*.metadata*" "class" "classes"))
    '(projectile-globally-ignored-file-suffixes '(".class" "class"))
    '(projectile-globally-ignored-files '("TAGS" ".gitignore" ".emacs.desktop" ".class" "*#*#"))
    '(projectile-indexing-method 'hybrid)
    '(read-buffer-completion-ignore-case t)
    '(safe-local-variable-values
-     '((cljr-magic-require-namespaces
-        ("edn" . "clojure.edn")
-        ("fix" . "stylitics.test.helpers.domain-fixtures")
-        ("h.sql" . "honey.sql")
-        ("io" "clojure.java.io" :only
-         ("clj"))
-        ("item.db" . "stylitics.item.db")
-        ("keys" . "bsless.keys")
-        ("low-touch.batch.db" . "stylitics.bundling.low-touch.batch.db")
-        ("math" . "clojure.math")
-        ("match" . "matcher-combinators.matchers")
-        ("schema.query" . "stylitics.postgres.schema.query")
-        ("set" . "clojure.set")
-        ("sql" . "next.jdbc.sql")
-        ("str" . "clojure.string")
-        ("string" . "clojure.string")
-        ("t.a" . "temporal.activity")
-        ("t.c" . "temporal.client.core")
-        ("t.p" . "temporal.promise")
-        ("t.test" . "stylitics.test.helpers.temporal")
-        ("test.db" . "stylitics.test.helpers.db")
-        ("test.redis" . "stylitics.test.helpers.redis")
-        ("walk" . "clojure.walk")
-        ("zip" . "clojure.zip"))
+     '((cljr-libspec-whitelist "^matcher-combinators.test")
+       (cljr-magic-require-namespaces ("edn" . "clojure.edn")
+                                      ("exp.db" . "stylitics.experiment.db")
+                                      ("exp.run" . "stylitics.experiment.run")
+                                      ("exp.bkt" . "stylitics.experiment.bucket")
+                                      ("exp.bkt.mbr"
+                                       . "stylitics.experiment.item-bucket-member")
+                                      ("fix"
+                                       . "stylitics.test.helpers.domain-fixtures")
+                                      ("h.sql" . "honey.sql")
+                                      ("iav" . "styitics.item.attribute")
+                                      ("iav.db" . "stylitics.item.attribute.db")
+                                      ("io" "clojure.java.io" :only ("clj"))
+                                      ("item.db" . "stylitics.item.db")
+                                      ("keys" . "bsless.keys")
+                                      ("low-touch.batch.db"
+                                       . "stylitics.bundling.low-touch.batch.db")
+                                      ("math" . "clojure.math")
+                                      ("match" . "matcher-combinators.matchers")
+                                      ("schema.query"
+                                       . "stylitics.postgres.schema.query")
+                                      ("set" . "clojure.set")
+                                      ("sql" . "next.jdbc.sql")
+                                      ("str" . "clojure.string")
+                                      ("sty.data" . "stylitics.core.data")
+                                      ("string" . "clojure.string")
+                                      ("t.a" . "temporal.activity")
+                                      ("t.c" . "temporal.client.core")
+                                      ("t.p" . "temporal.promise")
+                                      ("t.test"
+                                       . "stylitics.test.helpers.temporal")
+                                      ("test.db" . "stylitics.test.helpers.db")
+                                      ("test.redis"
+                                       . "stylitics.test.helpers.redis")
+                                      ("walk" . "clojure.walk")
+                                      ("zip" . "clojure.zip"))
+       (cljr-magic-require-namespaces ("edn" . "clojure.edn")
+                                      ("fix"
+                                       . "stylitics.test.helpers.domain-fixtures")
+                                      ("h.sql" . "honey.sql")
+                                      ("io" "clojure.java.io" :only ("clj"))
+                                      ("item.db" . "stylitics.item.db")
+                                      ("keys" . "bsless.keys")
+                                      ("low-touch.batch.db"
+                                       . "stylitics.bundling.low-touch.batch.db")
+                                      ("math" . "clojure.math")
+                                      ("match" . "matcher-combinators.matchers")
+                                      ("schema.query"
+                                       . "stylitics.postgres.schema.query")
+                                      ("set" . "clojure.set")
+                                      ("sql" . "next.jdbc.sql")
+                                      ("str" . "clojure.string")
+                                      ("string" . "clojure.string")
+                                      ("t.a" . "temporal.activity")
+                                      ("t.c" . "temporal.client.core")
+                                      ("t.p" . "temporal.promise")
+                                      ("t.test"
+                                       . "stylitics.test.helpers.temporal")
+                                      ("test.db" . "stylitics.test.helpers.db")
+                                      ("test.redis"
+                                       . "stylitics.test.helpers.redis")
+                                      ("walk" . "clojure.walk")
+                                      ("zip" . "clojure.zip"))
        (org-ditaa-jar-path . "~/programs/ditaa/ditaa.jar")
-       (cider-merge-sessions . project)
-       (cider-shadow-default-options . "dev")
+       (cider-merge-sessions . project) (cider-shadow-default-options . "dev")
        (cider-default-cljs-repl . shadow)
        (cider-ns-refresh-after-fn . "integrant.repl/resume")
        (cider-ns-refresh-before-fn . "integrant.repl/suspend")))
