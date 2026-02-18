@@ -304,8 +304,8 @@ layers configuration. You are free to put any user code."
 
   (define-key evil-normal-state-map (kbd "SPC :")  'execute-extended-command) ;; what is embark-act?
   (define-key evil-normal-state-map (kbd "C-x C-o")  'other-window)
-  (define-key evil-normal-state-map (kbd "C-x C-k")  (lambda () (interactive) (kill-this-buffer)))
-  (define-key evil-normal-state-map (kbd "C-x k") (lambda () (interactive) (kill-this-buffer)))
+  (define-key evil-normal-state-map (kbd "C-x C-k")  (lambda () (interactive) (kill-current-buffer)))
+  (define-key evil-normal-state-map (kbd "C-x k") (lambda () (interactive) (kill-current-buffer)))
 
   (define-key evil-normal-state-map (kbd "q") nil) ;; this is a way to make 'q' a prefix key
   (define-key evil-normal-state-map (kbd "qq") 'quit-window)
