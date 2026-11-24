@@ -46,25 +46,7 @@ values."
      version-control
      git
      )
-   ;; List of additional packages that will be installed without being
-   ;; wrapped in a layer. If you need some configuration for these
-   ;; packages then consider to create a layer, you can also put the
-   ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '(
-                                      indium ; javascript
-                                      company
-                                      shen-mode
-                                      org-beautify-theme
-                                      (shen-mode :location (recipe :fetcher gitlab :repo "zlrth/shen-mode")))
 
-   ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '(;; emacs 29 includes a string-edit function; this clashes with spacemacs' library function
-                                    string-edit
-                                    )
-
-   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
-   ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages t))
 
 (defun dotspacemacs/init ()
@@ -78,27 +60,10 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
-   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
-   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
-   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
-   ;; unchanged. (default 'vim)
    dotspacemacs-editing-style 'vim
-   ;; If non nil output loading progress in `*Mevil-projessages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
-   ;; Specify the startup banner. Default value is `official', it displays
-   ;; the official spacemacs logo. An integer value is the index of text
-   ;; banner, `random' chooses a random text banner in `core/banners'
-   ;; directory. A string value must be a path to an image format supported
-   ;; by your Emacs build.
-   ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'nil
-   ;; List of items to show in the startup buffer. If nil it is disabled.
-   ;; Possible values are: `recents' `bookmarks' `projects'.
-   ;; (default '(recents projects))
    dotspacemacs-startup-lists '((recents . 5) (projects . 10))
-   ;; List of themes, the first of the list is loaded when spacemacs starts.
-   ;; Press <SPC> T n to cycle to the next theme in the list (works great
-   ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark)
 
    desktop-dirname "/Users/matt/emacs.d/cache/"
@@ -110,8 +75,7 @@ values."
    dotspacemacs-default-font '("Monaco"
                                :size 12
                                :weight bold ;; bold is normal and normal is bold. wtf.
-                               :width normal
-                               :powerline-scale 1.1)
+                               :width normal)
 
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -186,17 +150,8 @@ values."
    ;; emphasis the current one). (default 'all)
    dotspacemacs-highlight-delimiters 'all
    dotspacemacs-show-trailing-whitespace nil
-   ;; If non nil advises quit functions to keep server open when quitting.
-   ;; (default nil)
    dotspacemacs-persistent-server nil
-   ;; List of search tool executable names. Spacemacs uses the first installed
-   ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
-   ;; (default '("ag" "pt" "ack" "grep"))
    dotspacemacs-search-tools '("ag" "ack" "grep")
-   ;; The default package repository used if no explicit repository has been
-   ;; specified with an installed package.
-   ;; Not used for now. (default nil)
-   dotspacemacs-default-package-repository nil
    ;; global-visual-line-mode t ;; disabling? not sure if i want this. i get line-escapes at the edge of a window.
    evil-escape-key-sequence "kj"))
 
@@ -228,9 +183,7 @@ layers configuration. You are free to put any user code."
   (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode t)
                                     (define-key cider-repl-mode-map (kbd "C-j") 'newline-and-indent)))
   (setq-default word-wrap t)
-  ;; same as below
   (add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
-  ;; disable org-capture's questionable behavior to override truncate-lines
   (add-hook 'org-capture-mode-hook (lambda () (setq truncate-lines nil)))
 
 
@@ -256,7 +209,6 @@ layers configuration. You are free to put any user code."
 
   (define-key evil-normal-state-map (kbd "#") 'refile-to-time-spent)
 
-  (rainbow-delimiters-mode-disable)
   (indent-guide-mode)
 
   (define-key evil-normal-state-map (kbd "C-u") 'prefix-arg)
@@ -536,70 +488,6 @@ This function is called at the very end of Spacemacs initialization."
        (cider-ns-refresh-before-fn . "dev/stop")
        (cider-ns-refresh-after-fn . "collage.core/start-dev!")
        (cider-ns-refresh-before-fn . "collage.core/stop!")
-       (cljr-libspec-whitelist "^matcher-combinators.test")
-       (cljr-magic-require-namespaces ("edn" . "clojure.edn")
-                                      ("exp.db" . "stylitics.experiment.db")
-                                      ("exp.run" . "stylitics.experiment.run")
-                                      ("exp.bkt" . "stylitics.experiment.bucket")
-                                      ("exp.bkt.mbr"
-                                       . "stylitics.experiment.item-bucket-member")
-                                      ("fix"
-                                       . "stylitics.test.helpers.domain-fixtures")
-                                      ("h.sql" . "honey.sql")
-                                      ("iav" . "styitics.item.attribute")
-                                      ("iav.db" . "stylitics.item.attribute.db")
-                                      ("io" "clojure.java.io" :only ("clj"))
-                                      ("item.db" . "stylitics.item.db")
-                                      ("keys" . "bsless.keys")
-                                      ("low-touch.batch.db"
-                                       . "stylitics.bundling.low-touch.batch.db")
-                                      ("math" . "clojure.math")
-                                      ("match" . "matcher-combinators.matchers")
-                                      ("schema.query"
-                                       . "stylitics.postgres.schema.query")
-                                      ("set" . "clojure.set")
-                                      ("sql" . "next.jdbc.sql")
-                                      ("str" . "clojure.string")
-                                      ("sty.data" . "stylitics.core.data")
-                                      ("string" . "clojure.string")
-                                      ("t.a" . "temporal.activity")
-                                      ("t.c" . "temporal.client.core")
-                                      ("t.p" . "temporal.promise")
-                                      ("t.test"
-                                       . "stylitics.test.helpers.temporal")
-                                      ("test.db" . "stylitics.test.helpers.db")
-                                      ("test.redis"
-                                       . "stylitics.test.helpers.redis")
-                                      ("walk" . "clojure.walk")
-                                      ("zip" . "clojure.zip"))
-       (cljr-magic-require-namespaces ("edn" . "clojure.edn")
-                                      ("fix"
-                                       . "stylitics.test.helpers.domain-fixtures")
-                                      ("h.sql" . "honey.sql")
-                                      ("io" "clojure.java.io" :only ("clj"))
-                                      ("item.db" . "stylitics.item.db")
-                                      ("keys" . "bsless.keys")
-                                      ("low-touch.batch.db"
-                                       . "stylitics.bundling.low-touch.batch.db")
-                                      ("math" . "clojure.math")
-                                      ("match" . "matcher-combinators.matchers")
-                                      ("schema.query"
-                                       . "stylitics.postgres.schema.query")
-                                      ("set" . "clojure.set")
-                                      ("sql" . "next.jdbc.sql")
-                                      ("str" . "clojure.string")
-                                      ("string" . "clojure.string")
-                                      ("t.a" . "temporal.activity")
-                                      ("t.c" . "temporal.client.core")
-                                      ("t.p" . "temporal.promise")
-                                      ("t.test"
-                                       . "stylitics.test.helpers.temporal")
-                                      ("test.db" . "stylitics.test.helpers.db")
-                                      ("test.redis"
-                                       . "stylitics.test.helpers.redis")
-                                      ("walk" . "clojure.walk")
-                                      ("zip" . "clojure.zip"))
-       (org-ditaa-jar-path . "~/programs/ditaa/ditaa.jar")
        (cider-merge-sessions . project) (cider-shadow-default-options . "dev")
        (cider-default-cljs-repl . shadow)
        (cider-ns-refresh-after-fn . "integrant.repl/resume")
